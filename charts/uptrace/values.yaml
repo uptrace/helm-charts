@@ -1,0 +1,352 @@
+# Default values for uptrace.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+nameOverride: ""
+fullnameOverride: ""
+
+config:
+  # Enable to log HTTP requests and ClickHouse queries.
+  debug: false
+
+  # Secret key that is used to sign JWT tokens etc.
+  secret_key: changeme
+
+  # Public URL for Vue-powered UI.
+  site:
+    scheme: "http"
+    host: "localhost"
+
+  listen:
+    # OTLP/gRPC API
+    grpc: ":14317"
+    # OTLP/HTTP API and Uptrace HTTP API
+    http: ":14318"
+
+  ch:
+    # Connection string for ClickHouse database. For example:
+    # clickhouse://<user>:<password>@<host>:<port>/<database>?sslmode=disable
+    #
+    # See https://clickhouse.uptrace.dev/
+    dsn: "clickhouse://${CLICKHOUSE_USER}:${CLICKHOUSE_PASSWORD}@${CLICKHOUSE_HOST}:9000/${CLICKHOUSE_DB}?sslmode=disable"
+
+  # Various options to tweak ClickHouse schema.
+  ch_schema:
+    # Compression codec, for example, LZ4 or ZSTD(3).
+    compression: Default
+
+    # Delete data after 30 days.
+    # Supports SQL interval syntax, for example, INTERVAL 30 DAY.
+    ttl: 30 DAY
+
+    # Whether to create ReplicatedMergeTree instead of MergeTree.
+    replicated: false
+
+  spans:
+    # The size of Go chan used to buffer incoming spans.
+    #buffer_size: 100000
+
+    # The number of spans to insert in a single query.
+    #batch_size: 10000
+
+  # To require authentication, uncomment the following section.
+  # users:
+  #   - id: 1
+  #     username: uptrace
+  #     password: uptrace
+
+  projects:
+    # First project is used for self-monitoring.
+    - id: 1
+      name: Uptrace
+      token: project1_secret_token
+
+    - id: 2
+      name: My project
+      token: project2_secret_token
+
+  loki:
+    addr: "http://localhost:3100"
+
+replicaCount: 1
+
+image:
+  repository: uptrace/uptrace-dev
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "latest"
+imagePullSecrets: []
+
+command:
+  name: uptrace
+  extraArgs: []
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext:
+  {}
+  # fsGroup: 2000
+
+securityContext:
+  {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: NodePort
+  annotations: {}
+  port: 14318
+
+  ports:
+    otlp:
+      enabled: true
+      containerPort: 14317
+      servicePort: 14317
+      hostPort: 14317
+      protocol: TCP
+    otlp-http:
+      enabled: true
+      containerPort: 14318
+      servicePort: 14318
+      hostPort: 14318
+      protocol: TCP
+
+ingress:
+  enabled: true
+  className: ""
+  annotations: {}
+  hosts:
+    - host: uptrace.local
+      paths:
+        - path: /
+          pathType: Prefix
+  # tls: []
+  #   - secretName: uptrace-tls
+  #     hosts:
+  #       - uptrace.local
+
+resources:
+  {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+###
+###
+### ---- ZOOKEEPER ----
+###
+###
+zookeeper:
+  # -- Whether to deploy Zookeeper as part of this release.
+  enabled: true
+  nameOverride: uptrace-zookeeper
+
+  # -- Number of ZooKeeper nodes
+  replicaCount: 1
+
+  autopurge:
+    # -- The time interval (in hours) for which the purge task has to be triggered
+    purgeInterval: 1
+
+  metrics:
+    # -- Enable Prometheus to access ZooKeeper metrics endpoint.
+    enabled: false
+    service:
+      annotations:
+        "prometheus.io/scrape":
+          "false" # let's make Prometheus skip the scraping of the
+          # service as we already scrape the pods (see below
+          # and https://github.com/bitnami/charts/issues/10101)
+
+  ## -- Zookeeper pod(s) annotation.
+  podAnnotations:
+    # Uncomment those lines if you want Prometheus server to scrape Zookeeper pods metrics.
+    # prometheus.io/scrape: "true"
+    # prometheus.io/path: /metrics
+    # prometheus.io/port: "9141"
+
+###
+###
+### ---- CLICKHOUSE ----
+###
+###
+clickhouse:
+  # -- Whether to install clickhouse. If false, `clickhouse.host` must be set
+  enabled: true
+  # -- Which namespace to install clickhouse and the `clickhouse-operator` to (defaults to namespace chart is installed to)
+  namespace:
+  # -- Clickhouse cluster
+  cluster: uptrace
+  # -- Clickhouse database
+  database: uptrace
+  # -- Clickhouse user
+  user: admin
+  # -- Clickhouse password
+  password: a1f31e03-c88e-4ca6-a2df-ad49183d15d9
+  # -- Whether to use TLS connection connecting to ClickHouse
+  secure: false
+  # -- Whether to verify TLS certificate on connection to ClickHouse
+  verify: false
+  # -- List of external Zookeeper servers to use.
+  # externalZookeeper:
+  #   servers:
+  #     - host: host1
+  #       port: 2181
+  #     - host: host2
+  #       port: 2181
+  #     - host: host3
+  #       port: 2181
+
+  image:
+    # -- ClickHouse image repository.
+    repository: clickhouse/clickhouse-server
+    # -- ClickHouse image tag.
+    tag: "22.3.6.5"
+
+  # -- Toleration labels for clickhouse pod assignment
+  tolerations: []
+  # -- Affinity settings for clickhouse pod
+  affinity: {}
+  # -- Clickhouse resource requests/limits. See more at http://kubernetes.io/docs/user-guide/compute-resources/
+  resources: {}
+  #   limits:
+  #     cpu: 1000m
+  #     memory: 16Gi
+  #   requests:
+  #     cpu: 4000m
+  #     memory: 16Gi
+  securityContext:
+    enabled: false
+    runAsUser: 101
+    runAsGroup: 101
+    fsGroup: 101
+
+  # -- Kubernetes Service type.
+  serviceType: ClusterIP
+
+  # -- An allowlist of IP addresses or network masks the ClickHouse user is
+  # allowed to access from. By default anything within a private network will be
+  # allowed. This should suffice for most use case although to expose to other
+  # networks you will need to update this setting.
+  allowedNetworkIps:
+    - "10.0.0.0/8"
+    - "172.16.0.0/12"
+    - "192.168.0.0/16"
+
+  persistence:
+    # -- Enable data persistence using PVC.
+    enabled: true
+
+    # -- Use a manually managed Persistent Volume and Claim.
+    #    If defined, PVC must be created manually before volume will be bound.
+    #
+    existingClaim: ""
+
+    # -- Persistent Volume Storage Class to use.
+    #    If defined, `storageClassName: <storageClass>`.
+    #    If set to `storageClassName: ""`, disables dynamic provisioning.
+    #    If undefined (the default) or set to `null`, no storageClassName spec is
+    #    set, choosing the default provisioner.
+    #
+    storageClass: null
+
+    # -- Persistent Volume size
+    size: 20Gi
+
+  ## -- Clickhouse user profile configuration.
+  ## You can use this to override profile settings, for example `default/max_memory_usage: 40000000000`
+  ## For the full list of settings, see:
+  ## - https://clickhouse.com/docs/en/operations/settings/settings-profiles/
+  ## - https://clickhouse.com/docs/en/operations/settings/settings/
+  profiles: {}
+
+  ## -- Default user profile configuration for Clickhouse. !!! Please DO NOT override this !!!
+  defaultProfiles:
+    default/allow_experimental_window_functions: "1"
+    default/allow_nondeterministic_mutations: "1"
+
+  ## -- Clickhouse cluster layout. (Experimental, use at own risk)
+  ## For a full list of options, see https://github.com/Altinity/clickhouse-operator/blob/master/docs/custom_resource_explained.md
+  ## section on clusters and layouts.
+  layout:
+    shardsCount: 1
+    replicasCount: 1
+
+  ## -- ClickHouse settings configuration.
+  ## You can use this to override settings, for example `prometheus/port: 9363`
+  ## For the full list of settings, see:
+  ## - https://clickhouse.com/docs/en/operations/settings/settings/
+  settings:
+    {}
+    # Uncomment those lines if you want to enable the built-in Prometheus HTTP endpoint in ClickHouse.
+    # prometheus/endpoint: /metrics
+    # prometheus/port: 9363
+    # prometheus/metrics: true
+    # prometheus/events: true
+    # prometheus/asynchronous_metrics: true
+
+  ## -- ClickHouse pod(s) annotation.
+  podAnnotations:
+    # Uncomment those lines if you want Prometheus server to scrape ClickHouse pods metrics.
+    # prometheus.io/scrape: "true"
+    # prometheus.io/path: /metrics
+    # prometheus.io/port: "9363"
+
+## External clickhouse configuration
+##
+externalClickhouse:
+  # -- Host of the external cluster. This is required when clickhouse.enabled is false
+  host:
+  # -- Name of the external cluster to run DDL queries on. This is required when clickhouse.enabled is false
+  cluster:
+  # -- Database name for the external cluster
+  database: uptrace
+  # -- User name for the external cluster to connect to the external cluster as
+  user:
+  # -- Password for the cluster. Ignored if existingClickhouse.existingSecret is set
+  password:
+  # -- Name of an existing Kubernetes secret object containing the password
+  existingSecret:
+  # -- Name of the key pointing to the password in your Kubernetes secret
+  existingSecretPasswordKey:
+  # -- Whether to use TLS connection connecting to ClickHouse
+  secure: false
+  # -- Whether to verify TLS connection connecting to ClickHouse
+  verify: false
+
+busybox:
+  # -- Specify the image to use for e.g. init containers
+  image: busybox:1.34

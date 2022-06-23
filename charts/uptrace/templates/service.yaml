@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "uptrace.fullname" . }}
+  labels:
+    {{- include "uptrace.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    {{- range $key, $port := .Values.service.ports }}
+    {{- if $port.enabled }}
+    - name: {{ $key }}
+      port: {{ $port.servicePort }}
+      targetPort: {{ $key }}
+      protocol: {{ $port.protocol }}
+    {{- end }}
+    {{- end }}
+  selector:
+    {{- include "uptrace.selectorLabels" . | nindent 4 }}

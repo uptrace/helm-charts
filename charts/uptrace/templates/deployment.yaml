@@ -1,0 +1,90 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "uptrace.fullname" . }}
+  labels:
+    {{- include "uptrace.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "uptrace.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+      {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "uptrace.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "uptrace.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          command:
+            - /{{ .Values.command.name }}
+            - --config=/conf/uptrace.yaml
+            {{- range .Values.command.extraArgs }}
+            - {{ . }}
+            {{- end }}
+            - serve
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            {{- range $key, $port := .Values.service.ports }}
+            {{- if $port.enabled }}
+            - name: {{ $key }}
+              containerPort: {{ $port.containerPort }}
+              protocol: {{ $port.protocol }}
+              {{- if and $.isAgent $port.hostPort }}
+              hostPort: {{ $port.hostPort }}
+              {{- end }}
+            {{- end }}
+            {{- end }}
+          env:
+            {{- include "uptrace.clickhouseEnv" . | nindent 12 }}
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 14318
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 14318
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - mountPath: /conf
+              name: {{ .Chart.Name }}-configmap
+      volumes:
+        - name: {{ .Chart.Name }}-configmap
+          configMap:
+            name: {{ include "uptrace.fullname" . }}
+            items:
+              - key: uptrace
+                path: uptrace.yaml
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      initContainers:
+      {{- include "uptrace.initContainers" . | indent 8 }}
