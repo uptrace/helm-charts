@@ -11,8 +11,10 @@ helm install -n telemetry --create-namespace my-uptrace uptrace/uptrace
 
 ### Kubernetes Cluster
 
-If you don't have a Kubernetes, create one with
+If you don't have a Kubernetes Cluster, create one with
 [minikube](https://minikube.sigs.k8s.io/docs/start/).
+
+To install Helm, see [Installation guide](https://helm.sh/docs/intro/install/).
 
 ### ClickHouse Operator
 
