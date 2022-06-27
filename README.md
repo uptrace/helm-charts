@@ -1,6 +1,20 @@
 # Uptrace Helm Chart for Kubernetes
 
-## ClickHouse Operator
+## Quickstart
+
+```shell
+helm repo add uptrace https://charts.uptrace.dev
+helm install -n telemetry --create-namespace my-uptrace uptrace/uptrace
+```
+
+## Before you begin
+
+### Kubernetes Cluster
+
+If you don't have a Kubernetes, create one with
+[minikube](https://minikube.sigs.k8s.io/docs/start/).
+
+### ClickHouse Operator
 
 To manage ClickHouse database, Uptrace chart requires
 [ClickHouse Operator](https://github.com/Altinity/clickhouse-operator/).
@@ -47,4 +61,32 @@ need to update `/etc/hosts`:
 
 ```
 $(minikube ip)    uptrace.local
+```
+
+## Upgrade
+
+To fetch information about latest charts from the Helm repositories:
+
+```shell
+helm repo update
+```
+
+To upgrade to the latest available version:
+
+```shell
+helm -n telemetry upgrade my-uptrace uptrace/uptrace
+```
+
+## Uninstall
+
+To uninstall Uptrace chart:
+
+```shell
+helm -n telemetry uninstall my-uptrace
+```
+
+To delete Uptrace namespace:
+
+```shell
+kubectl delete namespace telemetry
 ```
