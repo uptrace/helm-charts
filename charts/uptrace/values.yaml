@@ -5,9 +5,9 @@
 replicaCount: 1
 
 image:
-  repository: uptrace/uptrace-dev
-  pullPolicy: Always
-  tag: latest
+  repository: uptrace/uptrace
+  pullPolicy: IfNotPresent
+  tag: '1.2.4'
 
 clickhouse:
   imagePullSecrets: []
