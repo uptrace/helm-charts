@@ -14,6 +14,8 @@ helm install -n uptrace --create-namespace my-uptrace uptrace/uptrace
 If you don't have a Kubernetes Cluster, create one with
 [minikube](https://minikube.sigs.k8s.io/docs/start/).
 
+### Helm
+
 To install Helm, see [Helm Installation guide](https://helm.sh/docs/intro/install/).
 
 ## Installation

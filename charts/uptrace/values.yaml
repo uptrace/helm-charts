@@ -7,14 +7,14 @@ replicaCount: 1
 image:
   repository: uptrace/uptrace
   pullPolicy: IfNotPresent
-  tag: '1.2.4'
+  tag: '0.0.0' # uptrace
 
 clickhouse:
   imagePullSecrets: []
   image:
     repository: clickhouse/clickhouse-server
     pullPolicy: IfNotPresent
-    tag: '22.7'
+    tag: '22.10'
 
 nameOverride: ''
 fullnameOverride: ''

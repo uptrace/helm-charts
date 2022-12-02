@@ -13,7 +13,7 @@ debug:
 lint:
 	helm lint --strict --set "cloud=local" ./charts/uptrace
 
-install: create-namespace
+install:
 	helm install $(RELEASE_NAME) ./charts/uptrace -n $(NAMESPACE)
 
 uninstall:
