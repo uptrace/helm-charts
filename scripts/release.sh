@@ -47,5 +47,6 @@ sed --in-place "s/tag: '[^']*' # uptrace/tag: '${TAG#v}' # uptrace/" ./charts/up
 
 git add -u
 git commit -m "chore: release $TAG (release.sh)"
+git push origin master
 git tag ${TAG}
 git push origin ${TAG}

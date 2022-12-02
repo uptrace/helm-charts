@@ -2,10 +2,24 @@
 
 ## Quickstart
 
+Add Uptrace repo:
+
 ```shell
 helm repo add uptrace https://charts.uptrace.dev
 helm repo update uptrace
+```
+
+Install Uptrace:
+
+```shell
 helm install -n uptrace --create-namespace my-uptrace uptrace/uptrace
+```
+
+View available pods and logs:
+
+```shell
+kubectl get pods -n uptrace
+kubectl logs my-uptrace-0 -n uptrace
 ```
 
 ## Before you begin
