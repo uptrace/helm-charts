@@ -1,4 +1,4 @@
-NAMESPACE := telemetry
+NAMESPACE := uptrace
 RELEASE_NAME := my-uptrace
 
 create-namespace:
@@ -13,7 +13,7 @@ debug:
 lint:
 	helm lint --strict --set "cloud=local" ./charts/uptrace
 
-install:
+install: create-namespace
 	helm install $(RELEASE_NAME) ./charts/uptrace -n $(NAMESPACE)
 
 uninstall:

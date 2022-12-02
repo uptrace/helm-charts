@@ -1,17 +1,21 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "uptrace.fullname" . }}
+  name: clickhouse-{{ include "uptrace.fullname" . }}
   labels:
-    app: uptrace
+    app: clickhouse
     {{- include "uptrace.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
-    - port: {{ .Values.service.port }}
+    - port: 8123
       targetPort: http
       protocol: TCP
       name: http
+    - port: 9000
+      targetPort: tcp
+      protocol: TCP
+      name: tcp
   selector:
-    app: uptrace
+    app: clickhouse
     {{- include "uptrace.selectorLabels" . | nindent 4 }}

@@ -60,25 +60,3 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
-
-{{/* Common initContainers-wait-for-service-dependencies definition */}}
-{{- define "uptrace.initContainers" }}
-- name: wait-for-service-dependencies
-  image: {{ .Values.busybox.image }}
-  env:
-    {{- include "uptrace.clickhouseEnv" . | nindent 4 }}
-  command:
-    - /bin/sh
-    - -c
-    - >
-        {{ if .Values.clickhouse.enabled }}
-        until (
-            wget -qO- \
-                "http://$CLICKHOUSE_USER:$CLICKHOUSE_PASSWORD@{{ include "uptrace.clickhouse.fullname" . }}.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local:8123" \
-                --post-data "SELECT count() FROM clusterAllReplicas('{{ .Values.clickhouse.cluster }}', system, one)"
-        );
-        do
-            echo "waiting for ClickHouse cluster to become available"; sleep 1;
-        done
-        {{ end }}
-{{- end }}
