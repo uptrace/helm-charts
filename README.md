@@ -4,6 +4,7 @@
 
 ```shell
 helm repo add uptrace https://charts.uptrace.dev
+helm repo update uptrace
 helm install -n uptrace --create-namespace my-uptrace uptrace/uptrace
 ```
 

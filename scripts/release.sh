@@ -42,6 +42,7 @@ fi
 git checkout master
 
 sed --in-place "s/version: '[^']*'/version: '${TAG#v}'/" ./charts/uptrace/Chart.yaml
+sed --in-place "s/appVersion: '[^']*'/appVersion: '${TAG#v}'/" ./charts/uptrace/Chart.yaml
 sed --in-place "s/tag: '[^']*' # uptrace/tag: '${TAG#v}' # uptrace/" ./charts/uptrace/values.yaml
 
 git add -u
