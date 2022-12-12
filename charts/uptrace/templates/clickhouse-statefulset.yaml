@@ -1,7 +1,8 @@
+{{ if .Values.clickhouse.enabled }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: clickhouse-{{ include "uptrace.fullname" . }}
+  name: uptrace-clickhouse
   labels:
     app: clickhouse
     {{- include "uptrace.labels" . | nindent 4 }}
@@ -9,7 +10,7 @@ spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: 1
   {{- end }}
-  serviceName: clickhouse-{{ include "uptrace.fullname" . }}
+  serviceName: uptrace-clickhouse
   selector:
     matchLabels:
       app: clickhouse
@@ -71,3 +72,4 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes: []
+{{ end }}

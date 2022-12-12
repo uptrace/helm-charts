@@ -1,7 +1,8 @@
+{{ if .Values.clickhouse.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: clickhouse-{{ include "uptrace.fullname" . }}
+  name: uptrace-clickhouse
   labels:
     app: clickhouse
     {{- include "uptrace.labels" . | nindent 4 }}
@@ -19,3 +20,4 @@ spec:
   selector:
     app: clickhouse
     {{- include "uptrace.selectorLabels" . | nindent 4 }}
+{{ end }}

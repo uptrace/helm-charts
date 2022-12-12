@@ -106,13 +106,16 @@ helm -n uptrace upgrade my-uptrace uptrace/uptrace
 You change Uptrace config by creating `override-values.yaml` and providing Uptrace config in
 `uptrace.config` YAML option.
 
-For example, to use local ClickHouse database:
+For example, to use your own ClickHouse database:
 
 ```yaml
+clickhouse:
+  enabled: false
+
 uptrace:
   config:
     ch:
-      addr: localhost:9000
+      addr: clickhouse-host:9000
       user: default
       password:
       database: uptrace

@@ -10,6 +10,7 @@ image:
   tag: '1.2.4' # uptrace
 
 clickhouse:
+  enabled: true
   imagePullSecrets: []
   image:
     repository: clickhouse/clickhouse-server
@@ -96,7 +97,7 @@ uptrace:
     ## ClickHouse database credentials.
     ##
     ch:
-      addr: clickhouse-my-uptrace:9000
+      addr: uptrace-clickhouse:9000
       user: default
       password:
       database: uptrace
