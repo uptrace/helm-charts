@@ -2,7 +2,7 @@
 
 ## Quickstart
 
-Add Uptrace repo:
+Add Uptrace [repo](https://github.com/uptrace/helm-charts-repository):
 
 ```shell
 helm repo add uptrace https://charts.uptrace.dev
@@ -106,7 +106,8 @@ helm -n uptrace upgrade my-uptrace uptrace/uptrace
 You change Uptrace config by creating `override-values.yaml` and providing Uptrace config in
 `uptrace.config` YAML option.
 
-For example, to use your own ClickHouse database:
+For example, to use your own ClickHouse database, create `override-values.yaml` with the following
+content:
 
 ```yaml
 clickhouse:
