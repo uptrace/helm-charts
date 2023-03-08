@@ -87,6 +87,21 @@ Lastly, update `/etc/hosts` using the minikube IP address and open
 $(minikube ip)    uptrace.local
 ```
 
+## Deploying to AWS EKS
+
+To deploy Uptrace on AWS EKS and provide external access using the AWS LB Controller:
+
+```yaml
+service:
+  type: LoadBalancer
+  port: 80
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: 'external'
+    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: 'ip'
+  loadBalancerSourceRanges:
+    - '0.0.0.0/0'
+```
+
 ## Upgrade
 
 To fetch information about latest charts from the Helm repositories:
