@@ -5,6 +5,10 @@ metadata:
   labels:
     app: uptrace
     {{- include "uptrace.labels" . | nindent 4 }}
+  annotations:
+  {{- with .Values.service.annotations }}
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -15,3 +19,6 @@ spec:
   selector:
     app: uptrace
     {{- include "uptrace.selectorLabels" . | nindent 4 }}
+  {{- if and (eq .Values.service.type "LoadBalancer") (not (empty .Values.service.loadBalancerSourceRanges)) }}
+  loadBalancerSourceRanges: {{ .Values.service.loadBalancerSourceRanges }}
+  {{- end }}
