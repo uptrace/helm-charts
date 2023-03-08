@@ -45,8 +45,13 @@ securityContext:
   # runAsUser: 1000
 
 service:
-  type: ClusterIP
+  type: ClusterIP # or LoadBalancer
   port: 80
+  annotations: {}
+    # service.beta.kubernetes.io/aws-load-balancer-type: "external"
+    # service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: "ip"
+  loadBalancerSourceRanges: []
+    # - "0.0.0.0/0"
 
 ingress:
   enabled: true
