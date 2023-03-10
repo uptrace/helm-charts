@@ -89,19 +89,22 @@ $(minikube ip)    uptrace.local
 
 ## Deploying to AWS EKS
 
-To deploy Uptrace on AWS EKS and provide external access using the AWS LB Controller:
+To deploy Uptrace on AWS EKS and provide external access using the AWS LB Controller [annotations](https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.3/guide/service/annotations/):
 
 ```yaml
 service:
   type: LoadBalancer
   port: 80
-  annotations:
-    service.beta.kubernetes.io/aws-load-balancer-type: 'external'
-    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: 'ip'
   loadBalancerSourceRanges:
-    - '0.0.0.0/0'
-```
-
+    - "0.0.0.0/0"
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: "external"
+    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: "ip"
+    service.beta.kubernetes.io/aws-load-balancer-target-group-attributes: "preserve_client_ip.enabled=true"
+    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-protocol: "http"
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-port: "14318"
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-path: "/"
 ## Upgrade
 
 To fetch information about latest charts from the Helm repositories:
