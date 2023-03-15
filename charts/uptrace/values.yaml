@@ -51,7 +51,8 @@ service:
     # service.beta.kubernetes.io/aws-load-balancer-type: "external"
     # service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: "ip"
   loadBalancerSourceRanges: []
-    # - "0.0.0.0/0"
+    # - "10.0.0.0/8"
+    # - "20.0.0.0/8"
 
 ingress:
   enabled: true
