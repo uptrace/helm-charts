@@ -17,6 +17,10 @@ spec:
       targetPort: http
       protocol: TCP
       name: http
+    - port: {{ .Values.service.grpc_port }}
+      targetPort: grpc
+      protocol: TCP
+      name: grpc
   selector:
     app: uptrace
     {{- include "uptrace.selectorLabels" . | nindent 4 }}
