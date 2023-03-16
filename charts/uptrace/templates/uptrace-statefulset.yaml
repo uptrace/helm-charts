@@ -43,6 +43,9 @@ spec:
             - name: http
               containerPort: 14318
               protocol: TCP
+            - name: grpc
+              containerPort: 14317
+              protocol: TCP
           livenessProbe:
             httpGet:
               path: /
