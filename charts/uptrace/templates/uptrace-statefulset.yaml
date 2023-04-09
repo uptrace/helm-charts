@@ -41,10 +41,10 @@ spec:
               subPath: uptrace.yml
           ports:
             - name: http
-              containerPort: 14318
+              containerPort: {{ .Values.service.http_port }}
               protocol: TCP
             - name: grpc
-              containerPort: 14317
+              containerPort: {{ .Values.service.grpc_port }}
               protocol: TCP
           livenessProbe:
             httpGet:
