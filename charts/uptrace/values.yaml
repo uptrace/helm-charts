@@ -46,12 +46,14 @@ securityContext:
 
 service:
   type: ClusterIP # or LoadBalancer
-  port: 80
+  http_port: 14318
   grpc_port: 14317
-  annotations: {}
+  annotations:
+    {}
     # service.beta.kubernetes.io/aws-load-balancer-type: "external"
     # service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: "ip"
-  loadBalancerSourceRanges: []
+  loadBalancerSourceRanges:
+    []
     # - "10.0.0.0/8"
     # - "20.0.0.0/8"
 
@@ -334,14 +336,14 @@ uptrace:
     listen:
       # OTLP/gRPC API.
       grpc:
-        addr: ':14317'
+        addr: ':{{ tpl .Values.service.grpc_port }}'
         # tls:
         #   cert_file: config/tls/uptrace.crt
         #   key_file: config/tls/uptrace.key
 
       # OTLP/HTTP API and Uptrace API with UI.
       http:
-        addr: ':14318'
+        addr: ':{{ tpl .Values.service.http_port }}'
         # tls:
         #   cert_file: config/tls/uptrace.crt
         #   key_file: config/tls/uptrace.key
