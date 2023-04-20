@@ -1,0 +1,19 @@
+{{ if .Values.postgresql.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: uptrace-postgresql
+  labels:
+    app: postgresql
+    {{- include "uptrace.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: 5432
+      targetPort: tcp
+      protocol: TCP
+      name: tcp
+  selector:
+    app: postgresql
+    {{- include "uptrace.selectorLabels" . | nindent 4 }}
+{{ end }}

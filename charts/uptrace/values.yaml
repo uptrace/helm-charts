@@ -7,7 +7,7 @@ replicaCount: 1
 image:
   repository: uptrace/uptrace
   pullPolicy: IfNotPresent
-  tag: '1.3.1' # uptrace
+  tag: '1.4.0' # uptrace
 
 clickhouse:
   enabled: true
@@ -16,6 +16,14 @@ clickhouse:
     repository: clickhouse/clickhouse-server
     pullPolicy: IfNotPresent
     tag: '22.10'
+
+postgresql:
+  enabled: true
+  imagePullSecrets: []
+  image:
+    repository: postgres
+    pullPolicy: IfNotPresent
+    tag: '15-alpine'
 
 nameOverride: ''
 fullnameOverride: ''
@@ -138,7 +146,7 @@ uptrace:
     ## and so on.
     ##
     pg:
-      addr: uptrace-postgres:5432
+      addr: uptrace-postgresql:5432
       user: uptrace
       password: uptrace
       database: uptrace

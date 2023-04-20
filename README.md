@@ -87,11 +87,14 @@ Lastly, update `/etc/hosts` using the minikube IP address and open
 $(minikube ip)    uptrace.local
 ```
 
+Then open [http://uptrace.local/](http://uptrace.local/).
+
 ## Deploying to AWS EKS
 
-To deploy Uptrace on AWS EKS and provide external access using the AWS LB Controller [annotations](https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.3/guide/service/annotations/):
+To deploy Uptrace on AWS EKS and provide external access using the AWS LB Controller
+[annotations](https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.3/guide/service/annotations/):
 
-```yaml
+````yaml
 service:
   type: LoadBalancer
   port: 80
@@ -105,13 +108,14 @@ service:
     service.beta.kubernetes.io/aws-load-balancer-healthcheck-protocol: "http"
     service.beta.kubernetes.io/aws-load-balancer-healthcheck-port: "14318"
     service.beta.kubernetes.io/aws-load-balancer-healthcheck-path: "/"
+
 ## Upgrade
 
 To fetch information about latest charts from the Helm repositories:
 
 ```shell
 helm repo update
-```
+````
 
 To upgrade to the latest available version:
 
