@@ -64,6 +64,20 @@ To view Uptrace logs:
 kubectl logs my-uptrace-0 -n uptrace
 ```
 
+## Upgrading
+
+To fetch information about latest charts from the Helm repositories:
+
+```shell
+helm repo update
+```
+
+To upgrade to the latest available version:
+
+```shell
+helm -n uptrace upgrade my-uptrace uptrace/uptrace
+```
+
 ## Ingress
 
 Uptrace creates an ingress rule for `uptrace.local` domain.
@@ -94,38 +108,25 @@ Then open [http://uptrace.local/](http://uptrace.local/).
 To deploy Uptrace on AWS EKS and provide external access using the AWS LB Controller
 [annotations](https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.3/guide/service/annotations/):
 
-````yaml
+```yaml
 service:
   type: LoadBalancer
   port: 80
   loadBalancerSourceRanges:
-    - "0.0.0.0/0"
+    - '0.0.0.0/0'
   annotations:
-    service.beta.kubernetes.io/aws-load-balancer-type: "external"
-    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: "ip"
-    service.beta.kubernetes.io/aws-load-balancer-target-group-attributes: "preserve_client_ip.enabled=true"
-    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
-    service.beta.kubernetes.io/aws-load-balancer-healthcheck-protocol: "http"
-    service.beta.kubernetes.io/aws-load-balancer-healthcheck-port: "14318"
-    service.beta.kubernetes.io/aws-load-balancer-healthcheck-path: "/"
-
-## Upgrade
-
-To fetch information about latest charts from the Helm repositories:
-
-```shell
-helm repo update
-````
-
-To upgrade to the latest available version:
-
-```shell
-helm -n uptrace upgrade my-uptrace uptrace/uptrace
+    service.beta.kubernetes.io/aws-load-balancer-type: 'external'
+    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: 'ip'
+    service.beta.kubernetes.io/aws-load-balancer-target-group-attributes: 'preserve_client_ip.enabled=true'
+    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: 'http'
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-protocol: 'http'
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-port: '14318'
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-path: '/'
 ```
 
 ## Configuration
 
-You change Uptrace config by creating `override-values.yaml` and providing Uptrace config in
+You can change Uptrace config by creating `override-values.yaml` and providing Uptrace config in
 `uptrace.config` YAML option.
 
 For example, to use your own ClickHouse database, create `override-values.yaml` with the following
@@ -150,6 +151,8 @@ Then install Uptrace:
 helm --namespace uptrace install my-uptrace uptrace/uptrace -f override-values.yaml
 ```
 
+See [values.yaml](charts/uptrace/values.yaml) for all available configuration options.
+
 ## Uninstall
 
 To uninstall Uptrace chart:
@@ -162,4 +165,8 @@ To delete Uptrace namespace:
 
 ```shell
 kubectl delete namespace uptrace
+```
+
+```
+
 ```
