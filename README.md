@@ -166,7 +166,3 @@ To delete Uptrace namespace:
 ```shell
 kubectl delete namespace uptrace
 ```
-
-```
-
-```
