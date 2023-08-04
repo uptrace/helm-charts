@@ -54,6 +54,8 @@ spec:
             httpGet:
               path: /
               port: http
+          env:
+            {{- toYaml .Values.providedEnv | nindent 12 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
