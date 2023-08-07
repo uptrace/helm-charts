@@ -55,7 +55,7 @@ spec:
               path: /
               port: http
           env:
-            {{- toYaml .Values.providedEnv | nindent 12 }}
+            {{- toYaml .Values.uptrace.env | nindent 12 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
