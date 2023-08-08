@@ -22,3 +22,12 @@ version: '1.5.0'
 # follow Semantic Versioning. They should reflect the version the application is using.
 # It is recommended to use it with quotes.
 appVersion: '1.5.0'
+
+annotations:
+  artifacthub.io/category: monitoring-logging
+  artifacthub.io/links: |
+    - name: Uptrace Open Source APM
+      url: https://uptrace.dev/get/open-source-apm.html
+  artifacthub.io/screenshots: |
+    - title: Uptrace screenshot
+      url: https://uptrace.dev/get/uptrace/home.png
