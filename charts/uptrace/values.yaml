@@ -7,7 +7,7 @@ replicaCount: 1
 image:
   repository: uptrace/uptrace
   pullPolicy: IfNotPresent
-  tag: '1.5.0' # uptrace
+  tag: '1.5.3' # uptrace
 
 clickhouse:
   enabled: true
