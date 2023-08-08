@@ -108,7 +108,12 @@ tolerations: []
 
 affinity: {}
 
+
 uptrace:
+  ## Provided env variables for uptrace container
+  ## You can use those variables in uptrace.config
+  ## Values are same as here https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/
+  env: {}
   config:
     ##
     ## Uptrace configuration file.
