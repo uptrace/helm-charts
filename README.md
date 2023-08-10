@@ -103,27 +103,6 @@ $(minikube ip)    uptrace.local
 
 Then open [http://uptrace.local/](http://uptrace.local/).
 
-## Deploying to AWS EKS
-
-To deploy Uptrace on AWS EKS and provide external access using the AWS LB Controller
-[annotations](https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.3/guide/service/annotations/):
-
-```yaml
-service:
-  type: LoadBalancer
-  port: 80
-  loadBalancerSourceRanges:
-    - '0.0.0.0/0'
-  annotations:
-    service.beta.kubernetes.io/aws-load-balancer-type: 'external'
-    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: 'ip'
-    service.beta.kubernetes.io/aws-load-balancer-target-group-attributes: 'preserve_client_ip.enabled=true'
-    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: 'http'
-    service.beta.kubernetes.io/aws-load-balancer-healthcheck-protocol: 'http'
-    service.beta.kubernetes.io/aws-load-balancer-healthcheck-port: '14318'
-    service.beta.kubernetes.io/aws-load-balancer-healthcheck-path: '/'
-```
-
 ## Configuration
 
 You can change Uptrace config by creating `override-values.yaml` and providing Uptrace config in
@@ -152,6 +131,77 @@ helm --namespace uptrace install my-uptrace uptrace/uptrace -f override-values.y
 ```
 
 See [values.yaml](charts/uptrace/values.yaml) for all available configuration options.
+
+## ClickHouse cluster
+
+Create `clickhouse-values.yaml`:
+
+```yaml
+shards: 1
+auth:
+  username: default
+  password: test
+```
+
+Then launch a ClickHouse cluster:
+
+```shell
+helm install -n uptrace clickhouse oci://registry-1.docker.io/bitnamicharts/clickhouse -f clickhouse-values.yaml
+```
+
+Create `uptrace-values.yaml`:
+
+```yaml
+replicaCount: 3
+
+uptrace:
+  config:
+    ch:
+      addr: clickhouse-headless:9000
+      user: default
+      password: test
+      database: default
+    ch_schema:
+      replicated: true
+      cluster: default
+
+clickhouse:
+  enabled: false
+```
+
+Then launch Uptrace:
+
+```shell
+helm install -n uptrace uptrace uptrace/uptrace -f uptrace-values.yaml
+```
+
+To connect to the ClickHouse database:
+
+```shell
+kubectl port-forward --namespace uptrace service/clickhouse-headless 9000:9000 &
+clickhouse-client
+```
+
+## Deploying to AWS EKS
+
+To deploy Uptrace on AWS EKS and provide external access using the AWS LB Controller
+[annotations](https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.3/guide/service/annotations/):
+
+```yaml
+service:
+  type: LoadBalancer
+  port: 80
+  loadBalancerSourceRanges:
+    - '0.0.0.0/0'
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: 'external'
+    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: 'ip'
+    service.beta.kubernetes.io/aws-load-balancer-target-group-attributes: 'preserve_client_ip.enabled=true'
+    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: 'http'
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-protocol: 'http'
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-port: '14318'
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-path: '/'
+```
 
 ## Uninstall
 
