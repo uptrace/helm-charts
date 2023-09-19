@@ -16,6 +16,10 @@ clickhouse:
     repository: clickhouse/clickhouse-server
     pullPolicy: IfNotPresent
     tag: '22.10'
+  persistence:
+    enabled: true
+    storageClassName: "" # leave empty to use the default storage class
+    size: 8Gi
 
 postgresql:
   enabled: true
