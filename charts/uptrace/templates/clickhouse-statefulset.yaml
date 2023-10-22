@@ -41,7 +41,13 @@ spec:
           env:
             - name: CLICKHOUSE_DB
               value: uptrace
+          {{- if .Values.clickhouse.persistence.enabled }}
+          volumeMounts:
+          - name: uptrace-clickhouse-data
+            mountPath: /var/lib/clickhouse
+          {{- else }}
           volumeMounts: []
+          {{- end }}
           ports:
             - name: http
               containerPort: 8123
@@ -72,4 +78,17 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes: []
+{{ if .Values.clickhouse.persistence.enabled }}
+  volumeClaimTemplates:
+  - metadata:
+      name: uptrace-clickhouse-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      {{- if not (eq .Values.clickhouse.persistence.storageClassName "") }}
+      storageClassName: {{ .Values.clickhouse.persistence.storageClassName }}
+      {{- end }}
+      resources:
+        requests:
+          storage: {{ .Values.clickhouse.persistence.size }}
+{{ end }}
 {{ end }}
