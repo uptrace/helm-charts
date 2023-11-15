@@ -346,7 +346,7 @@ uptrace:
     ## https://uptrace.dev/get/alerting.html
     ##
     smtp_mailer:
-      enabled: true
+      enabled: false
       host: localhost
       port: 1025
       username: mailhog
