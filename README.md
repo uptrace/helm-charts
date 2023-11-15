@@ -22,6 +22,9 @@ kubectl get pods -n uptrace
 kubectl logs my-uptrace-0 -n uptrace
 ```
 
+If you have [ingress](#ingress) enabled and configured correctly, Uptrace UI should be available at
+[http://uptrace.local](http://uptrace.local).
+
 ## Before you begin
 
 ### Kubernetes Cluster

@@ -18,7 +18,7 @@ clickhouse:
     tag: '22.10'
   persistence:
     enabled: true
-    storageClassName: "" # leave empty to use the default storage class
+    storageClassName: '' # leave empty to use the default storage class
     size: 8Gi
 
 postgresql:
@@ -158,10 +158,7 @@ uptrace:
       user: uptrace
       password: uptrace
       database: uptrace
-
-      # TLS configuration. Uncomment to enable.
-      # tls:
-      #   insecure_skip_verify: true # only for self-signed certificates
+      tls: { insecure_skip_verify: true }
 
     ##
     ## A list of pre-configured projects. Each project is fully isolated.
@@ -297,16 +294,14 @@ uptrace:
       # OTLP/gRPC API.
       grpc:
         addr: ':14317'
-        # tls:
-        #   cert_file: config/tls/uptrace.crt
-        #   key_file: config/tls/uptrace.key
 
       # OTLP/HTTP API and Uptrace API with Vue UI.
       http:
         addr: ':14318'
-        # tls:
-        #   cert_file: config/tls/uptrace.crt
-        #   key_file: config/tls/uptrace.key
+
+      # tls:
+      #   cert_file: config/tls/uptrace.crt
+      #   key_file: config/tls/uptrace.key
 
     ##
     ## Various options for Uptrace UI.
