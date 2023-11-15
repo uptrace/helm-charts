@@ -1,0 +1,36 @@
+{{ if .Values.otelcol.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: otelcontribcol
+  labels:
+    app: otelcontribcol
+    {{- include "uptrace.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: otelcontribcol
+      {{- include "uptrace.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: otelcontribcol
+        {{- include "uptrace.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: otelcontribcol
+      containers:
+        - name: otelcontribcol
+          image: otel/opentelemetry-collector-contrib
+          args: ['--config', '/etc/config/config.yaml']
+          volumeMounts:
+            - name: config
+              mountPath: /etc/config
+          imagePullPolicy: IfNotPresent
+          env:
+            {{- toYaml .Values.uptrace.env | nindent 12 }}
+      volumes:
+        - name: config
+          configMap:
+            name: otelcontribcol
+{{ end }}

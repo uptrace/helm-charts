@@ -1,0 +1,36 @@
+{{ if .Values.otelcol.enabled }}
+apiVersion: opentelemetry.io/v1alpha1
+kind: OpenTelemetryCollector
+metadata:
+  name: sidecar-for-my-app
+  labels:
+    {{- include "uptrace.labels" . | nindent 4 }}
+spec:
+  mode: sidecar
+  config: |
+    receivers:
+      kubeletstats:
+        collection_interval: 20s
+        auth_type: "serviceAccount"
+        endpoint: "https://${env:K8S_NODE_NAME}:10250"
+        insecure_skip_verify: true
+
+    processors:
+      batch:
+        send_batch_size: 10000
+        timeout: 10s
+
+    exporters:
+      debug:
+      otlp/local:
+        endpoint: http://my-uptrace:14317
+        tls: { insecure: true }
+        headers: { 'uptrace-dsn': 'http://project1_secret_token@localhost:14317/1' }
+
+    service:
+      pipelines:
+        metrics:
+          receivers: [kubeletstats]
+          processors: [batch]
+          exporters: [debug, otlp/local]
+{{ end }}

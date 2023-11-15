@@ -13,11 +13,14 @@ debug:
 lint:
 	helm lint --strict --set "cloud=local" ./charts/uptrace
 
-install:
+install: create-namespace
 	helm install $(RELEASE_NAME) ./charts/uptrace -n $(NAMESPACE)
 
 uninstall:
 	helm uninstall -n $(NAMESPACE) $(RELEASE_NAME)
+
+logs:
+	kubectl logs my-uptrace-0 -n uptrace
 
 delete: uninstall
 	kubectl delete all,pvc,cm --all -n $(NAMESPACE)
