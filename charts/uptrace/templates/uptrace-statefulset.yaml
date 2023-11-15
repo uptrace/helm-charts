@@ -16,6 +16,7 @@ spec:
       {{- include "uptrace.selectorLabels" . | nindent 6 }}
   template:
     metadata:
+      {{- with .Values.podAnnotations }}
       annotations:
         checksum/config: {{ .Values.uptrace.config | toYaml | sha256sum }}
       labels:
