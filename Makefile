@@ -16,7 +16,7 @@ lint:
 install: create-namespace
 	helm install $(RELEASE_NAME) ./charts/uptrace -n $(NAMESPACE)
 
-uninstall:
+uninstall: delete-namespace
 	helm uninstall -n $(NAMESPACE) $(RELEASE_NAME)
 
 logs:
