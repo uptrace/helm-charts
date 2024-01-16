@@ -47,14 +47,16 @@ spec:
             - name: grpc
               containerPort: {{ .Values.service.grpc_port }}
               protocol: TCP
+          {{ with .Values.uptrace.config.site.addr | urlParse }}
           livenessProbe:
             httpGet:
-              path: /
+              path: {{ .path }}
               port: http
           readinessProbe:
             httpGet:
-              path: /
+              path: {{ .path }}
               port: http
+          {{ end }}
           env:
             {{- toYaml .Values.uptrace.env | nindent 12 }}
           resources:
