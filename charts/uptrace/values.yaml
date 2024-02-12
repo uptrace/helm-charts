@@ -28,6 +28,10 @@ postgresql:
     repository: postgres
     pullPolicy: IfNotPresent
     tag: '15-alpine'
+  persistence:
+    enabled: true
+    storageClassName: ''
+    size: 4Gi
 
 otelcol:
   enabled: true
