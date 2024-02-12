@@ -43,7 +43,13 @@ spec:
               value: uptrace
             - name: POSTGRES_PASSWORD
               value: uptrace
+          {{- if .Values.postgresql.persistence.enabled }}
+          volumeMounts:
+          - name: uptrace-postgresql-data
+            mountPath: /var/lib/postgresql
+          {{- else }}
           volumeMounts: []
+          {{- end }}
           ports:
             - name: tcp
               containerPort: 5432
@@ -88,4 +94,17 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes: []
+{{ if .Values.clickhouse.persistence.enabled }}
+  volumeClaimTemplates:
+  - metadata:
+      name: uptrace-postgresql-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      {{- if not (eq .Values.postgresql.persistence.storageClassName "") }}
+      storageClassName: {{ .Values.postgresql.persistence.storageClassName }}
+      {{- end }}
+      resources:
+        requests:
+          storage: {{ .Values.postgresql.persistence.size }}
+{{ end }}
 {{ end }}
