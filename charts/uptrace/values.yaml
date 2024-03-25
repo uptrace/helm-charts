@@ -7,7 +7,7 @@ replicaCount: 1
 image:
   repository: uptrace/uptrace
   pullPolicy: IfNotPresent
-  tag: '1.6.1' # uptrace
+  tag: '1.7.0-rc.1' # uptrace
 
 clickhouse:
   enabled: true
@@ -15,7 +15,7 @@ clickhouse:
   image:
     repository: clickhouse/clickhouse-server
     pullPolicy: IfNotPresent
-    tag: '23.7'
+    tag: '23.11'
   persistence:
     enabled: true
     storageClassName: '' # leave empty to use the default storage class
@@ -30,7 +30,11 @@ postgresql:
     tag: '15-alpine'
 
 otelcol:
-  enabled: true
+  enabled: tre
+  otlpExporter:
+    endpoint: http://my-uptrace:14317
+    tls: { insecure: true }
+    headers: { 'uptrace-dsn': 'http://project1_secret_token@localhost:14317/1' }
 
 nameOverride: ''
 fullnameOverride: ''
@@ -199,39 +203,6 @@ uptrace:
           - deployment_environment
         prom_compat: true
 
-    ##
-    ## Create metrics from spans and events.
-    ##
-    metrics_from_spans:
-      - name: uptrace.tracing.spans
-        description: Spans duration (excluding events)
-        instrument: histogram
-        unit: microseconds
-        value: _duration / 1000
-        attrs:
-          - _system
-          - _group_id
-          - service_name
-          - host_name
-          - _status_code
-        annotations:
-          - display_name
-        where: _event_name = ''
-
-      - name: uptrace.tracing.events
-        description: Events count (excluding spans)
-        instrument: counter
-        unit: 1
-        value: _count
-        attrs:
-          - _system
-          - _group_id
-          - _name
-          - host_name
-        annotations:
-          - display_name
-        where: _is_event = 1
-
     auth:
       users:
         - name: Anonymous
@@ -315,7 +286,7 @@ uptrace:
     ##
     site:
       # Overrides public URL for Vue-powered UI.
-      #addr: 'https://uptrace.mydomain.com'
+      addr: 'http://localhost:14318/'
 
     ##
     ## Spans processing options.
