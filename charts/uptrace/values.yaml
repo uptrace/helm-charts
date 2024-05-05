@@ -34,7 +34,7 @@ postgresql:
     size: 8Gi
 
 otelcol:
-  enabled: tre
+  enabled: true
   otlpExporter:
     endpoint: http://my-uptrace:14317
     tls: { insecure: true }
