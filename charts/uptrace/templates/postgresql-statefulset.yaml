@@ -40,9 +40,15 @@ spec:
           imagePullPolicy: {{ .Values.postgresql.image.pullPolicy }}
           env:
             - name: POSTGRES_USER
-              value: uptrace
+              valueFrom:
+                secretKeyRef:
+                  name: uptrace-postgresql-secret # Secret name
+                  key: POSTGRES_USER
             - name: POSTGRES_PASSWORD
-              value: uptrace
+              valueFrom:
+                secretKeyRef:
+                  name: uptrace-postgresql-secret # Secret name
+                  key: POSTGRES_PASSWORD
           {{- if .Values.postgresql.persistence.enabled }}
           volumeMounts:
           - name: uptrace-postgresql-data
