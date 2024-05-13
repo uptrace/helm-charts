@@ -52,7 +52,8 @@ spec:
           {{- if .Values.postgresql.persistence.enabled }}
           volumeMounts:
           - name: uptrace-postgresql-data
-            mountPath: /var/lib/postgresql/data
+            mountPath: /var/lib/postgresql
+            subPath: data
           {{- else }}
           volumeMounts: []
           {{- end }}
