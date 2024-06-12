@@ -7,9 +7,9 @@ metadata:
     app: postgresql
     {{- include "uptrace.labels" . | nindent 4 }}
 spec:
-  type: {{ .Values.service.type }}
+  type: {{ .Values.postgresql.service.type }}
   ports:
-    - port: 5432
+    - port: {{ .Values.postgresql.service.port }}
       targetPort: tcp
       protocol: TCP
       name: tcp
