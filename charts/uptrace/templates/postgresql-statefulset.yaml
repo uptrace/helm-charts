@@ -7,9 +7,7 @@ metadata:
     app: postgresql
     {{- include "uptrace.labels" . | nindent 4 }}
 spec:
-  {{- if not .Values.autoscaling.enabled }}
   replicas: 1
-  {{- end }}
   serviceName: uptrace-postgresql
   selector:
     matchLabels:
@@ -52,7 +50,8 @@ spec:
           {{- if .Values.postgresql.persistence.enabled }}
           volumeMounts:
           - name: uptrace-postgresql-data
-            mountPath: /var/lib/postgresql/data
+            mountPath: /var/lib/postgresql
+            subPath: data
           {{- else }}
           volumeMounts: []
           {{- end }}
@@ -86,16 +85,16 @@ spec:
             successThreshold: 1
             timeoutSeconds: 5
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
-      {{- with .Values.nodeSelector }}
+            {{- toYaml .Values.postgresql.resources | nindent 12 }}
+      {{- with .Values.postgresql.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.affinity }}
+      {{- with .Values.postgresql.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.tolerations }}
+      {{- with .Values.postgresql.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
@@ -114,3 +113,4 @@ spec:
           storage: {{ .Values.postgresql.persistence.size }}
 {{ end }}
 {{ end }}
+
