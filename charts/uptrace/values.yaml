@@ -133,6 +133,11 @@ uptrace:
         fieldRef:
           fieldPath: spec.nodeName
 
+  ## Provided additional env variables sources for uptrace container
+  ## You can use those variables in uptrace.config
+  ## https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/#define-an-environment-variable-for-a-container
+  envFrom: []
+
   config:
     ##
     ## Uptrace configuration file.
