@@ -59,6 +59,8 @@ spec:
           {{ end }}
           env:
             {{- toYaml .Values.uptrace.env | nindent 12 }}
+          envFrom:
+            {{- toYaml .Values.uptrace.envFrom | nindent 12 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
