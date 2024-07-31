@@ -60,3 +60,14 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{- define "uptrace.config" -}}
+{{- $config := omit .Values.uptrace.config "projects"}}
+{{- $projects := list -}}
+{{- $projects = append $projects .Values.uptrace.config.projects.default_project }}
+{{- range $project := .Values.uptrace.config.projects.additional_projects }}
+{{- $projects = append $projects $project }}
+{{- end }}
+{{- $config = merge $config (dict "projects" $projects) }}
+{{- tpl (toYaml $config) . -}}
+{{- end}}

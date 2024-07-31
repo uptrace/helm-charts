@@ -209,15 +209,15 @@ service:
   type: LoadBalancer
   port: 80
   loadBalancerSourceRanges:
-    - '0.0.0.0/0'
+    - "0.0.0.0/0"
   annotations:
-    service.beta.kubernetes.io/aws-load-balancer-type: 'external'
-    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: 'ip'
-    service.beta.kubernetes.io/aws-load-balancer-target-group-attributes: 'preserve_client_ip.enabled=true'
-    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: 'http'
-    service.beta.kubernetes.io/aws-load-balancer-healthcheck-protocol: 'http'
-    service.beta.kubernetes.io/aws-load-balancer-healthcheck-port: '14318'
-    service.beta.kubernetes.io/aws-load-balancer-healthcheck-path: '/'
+    service.beta.kubernetes.io/aws-load-balancer-type: "external"
+    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: "ip"
+    service.beta.kubernetes.io/aws-load-balancer-target-group-attributes: "preserve_client_ip.enabled=true"
+    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-protocol: "http"
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-port: "14318"
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-path: "/"
 ```
 
 ## Uninstall

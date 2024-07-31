@@ -6,4 +6,4 @@ metadata:
     {{- include "uptrace.labels" . | nindent 4 }}
 data:
   uptrace.yml: |
-{{ .Values.uptrace.config | toYaml | indent 4 }}
+{{- include "uptrace.config" . | nindent 4 }}

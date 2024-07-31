@@ -7,7 +7,7 @@ replicaCount: 1
 image:
   repository: uptrace/uptrace
   pullPolicy: IfNotPresent
-  tag: '1.7.0'
+  tag: ""
 
 clickhouse:
   enabled: true
@@ -15,10 +15,10 @@ clickhouse:
   image:
     repository: clickhouse/clickhouse-server
     pullPolicy: IfNotPresent
-    tag: '23.11'
+    tag: "24.6"
   persistence:
     enabled: true
-    storageClassName: '' # leave empty to use the default storage class
+    storageClassName: "" # leave empty to use the default storage class
     size: 8Gi
 
 postgresql:
@@ -27,10 +27,10 @@ postgresql:
   image:
     repository: postgres
     pullPolicy: IfNotPresent
-    tag: '15-alpine'
+    tag: "15-alpine"
   persistence:
     enabled: true
-    storageClassName: '' # leave empty to use the default storage class
+    storageClassName: "" # leave empty to use the default storage class
     size: 8Gi
 
 otelcol:
@@ -38,10 +38,10 @@ otelcol:
   otlpExporter:
     endpoint: http://my-uptrace:14317
     tls: { insecure: true }
-    headers: { 'uptrace-dsn': 'http://project1_secret_token@localhost:14317/1' }
+    headers: { "uptrace-dsn": "http://project1_secret_token@localhost:14317/1" }
 
-nameOverride: ''
-fullnameOverride: ''
+nameOverride: ""
+fullnameOverride: ""
 
 serviceAccount:
   # Specifies whether a service account should be created
@@ -50,7 +50,7 @@ serviceAccount:
   annotations: {}
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
-  name: ''
+  name: ""
 
 podAnnotations: {}
 
@@ -82,16 +82,18 @@ service:
 
 ingress:
   enabled: true
-  className: ''
+  className: ""
   annotations:
     {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
+  labels: {}
+  path: /
+
+  # pathType is only for k8s >= 1.1=
+  pathType: Prefix
   hosts:
     - host: uptrace.local
-      paths:
-        - path: /
-          pathType: Prefix
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
@@ -185,8 +187,8 @@ uptrace:
     ## A list of pre-configured projects. Each project is fully isolated.
     ##
     projects:
-      # Conventionally, the first project is used to monitor Uptrace itself.
-      - id: 1
+      default_project:
+        id: 1
         name: Uptrace
         # Token grants write access to the project. Keep a secret.
         token: project1_secret_token
@@ -200,17 +202,8 @@ uptrace:
         group_funcs_by_service: false
         # Enable prom_compat if you want to use the project as a Prometheus datasource in Grafana.
         prom_compat: true
-
-      # Other projects can be used to monitor your applications.
-      # To monitor micro-services or multiple related services, use a single project.
-      - id: 2
-        name: My project
-        token: project2_secret_token
-        pinned_attrs:
-          - service_name
-          - host_name
-          - deployment_environment
-        prom_compat: true
+      # Conventionally, the first project is used to monitor Uptrace itself.
+      additional_projects: []
 
     auth:
       users:
@@ -267,12 +260,12 @@ uptrace:
       spans:
         # Delete spans data after 30 days.
         ttl_delete: 7 DAY
-        storage_policy: 'default'
+        storage_policy: "default"
 
       metrics:
         # Delete metrics data after 90 days.
         ttl_delete: 30 DAY
-        storage_policy: 'default'
+        storage_policy: "default"
 
     ##
     ## Addresses on which Uptrace receives gRPC and HTTP requests.
@@ -280,11 +273,11 @@ uptrace:
     listen:
       # OTLP/gRPC API.
       grpc:
-        addr: ':14317'
+        addr: ":14317"
 
       # OTLP/HTTP API and Uptrace API with Vue UI.
       http:
-        addr: ':14318'
+        addr: ":14318"
 
       # tls:
       #   cert_file: config/tls/uptrace.crt
@@ -295,7 +288,7 @@ uptrace:
     ##
     site:
       # Overrides public URL for Vue-powered UI.
-      addr: 'http://localhost:14318/'
+      addr: "http://localhost:14318/"
 
     ##
     ## Spans processing options.
@@ -338,7 +331,7 @@ uptrace:
       port: 1025
       username: mailhog
       password: mailhog
-      from: 'uptrace@localhost'
+      from: "uptrace@localhost"
 
     ##
     ## uptrace-go client configuration.
