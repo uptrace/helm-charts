@@ -1,6 +1,10 @@
 NAMESPACE := uptrace
 RELEASE_NAME := my-uptrace
 
+init:
+	minikube start
+	minikube addons enable ingress
+
 create-namespace:
 	kubectl create namespace $(NAMESPACE)
 
