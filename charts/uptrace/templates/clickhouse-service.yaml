@@ -7,13 +7,13 @@ metadata:
     app: clickhouse
     {{- include "uptrace.labels" . | nindent 4 }}
 spec:
-  type: {{ .Values.service.type }}
+  type: {{ .Values.clickhouse.service.type }}
   ports:
-    - port: 8123
+    - port: {{ .Values.clickhouse.service.http_port }}
       targetPort: http
       protocol: TCP
       name: http
-    - port: 9000
+    - port: {{ .Values.clickhouse.service.tcp_port }}
       targetPort: tcp
       protocol: TCP
       name: tcp

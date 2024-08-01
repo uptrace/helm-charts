@@ -6,9 +6,7 @@ metadata:
     app: uptrace
     {{- include "uptrace.labels" . | nindent 4 }}
 spec:
-  {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.replicaCount }}
-  {{- end }}
+  replicas: {{ .Values.uptrace.replicaCount }}
   serviceName: {{ include "uptrace.fullname" . }}
   selector:
     matchLabels:
@@ -23,7 +21,7 @@ spec:
         app: uptrace
         {{- include "uptrace.selectorLabels" . | nindent 8 }}
     spec:
-      {{- with .Values.imagePullSecrets }}
+      {{- with .Values.uptrace.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
@@ -34,18 +32,18 @@ spec:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          image: "{{ .Values.uptrace.image.repository }}:{{ .Values.uptrace.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.uptrace.image.pullPolicy }}
           volumeMounts:
             - name: config
               mountPath: /etc/uptrace/uptrace.yml
               subPath: uptrace.yml
           ports:
             - name: http
-              containerPort: {{ .Values.service.http_port }}
+              containerPort: {{ .Values.uptrace.service.http_port }}
               protocol: TCP
             - name: grpc
-              containerPort: {{ .Values.service.grpc_port }}
+              containerPort: {{ .Values.uptrace.service.grpc_port }}
               protocol: TCP
           {{ with .Values.uptrace.config.site.addr | urlParse }}
           livenessProbe:
@@ -62,16 +60,16 @@ spec:
           envFrom:
             {{- toYaml .Values.uptrace.envFrom | nindent 12 }}
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
-      {{- with .Values.nodeSelector }}
+            {{- toYaml .Values.uptrace.resources | nindent 12 }}
+      {{- with .Values.uptrace.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.affinity }}
+      {{- with .Values.uptrace.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.tolerations }}
+      {{- with .Values.uptrace.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}

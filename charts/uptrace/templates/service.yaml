@@ -5,25 +5,26 @@ metadata:
   labels:
     app: uptrace
     {{- include "uptrace.labels" . | nindent 4 }}
+   {{- if .Values.uptrace.service.annotations }}
   annotations:
-  {{- with .Values.service.annotations }}
+  {{- with .Values.utprace.service.annotations }}
   {{- toYaml . | nindent 4 }}
   {{- end }}
-
+  {{- end }}
 spec:
-  type: {{ .Values.service.type }}
+  type: {{ .Values.uptrace.service.type }}
   ports:
-    - port: {{ .Values.service.http_port }}
+    - port: {{ .Values.uptrace.service.http_port }}
       targetPort: http
       protocol: TCP
       name: http
-    - port: {{ .Values.service.grpc_port }}
+    - port: {{ .Values.uptrace.service.grpc_port }}
       targetPort: grpc
       protocol: TCP
       name: grpc
   selector:
     app: uptrace
     {{- include "uptrace.selectorLabels" . | nindent 4 }}
-  {{- if and (eq .Values.service.type "LoadBalancer") (not (empty .Values.service.loadBalancerSourceRanges)) }}
-  loadBalancerSourceRanges: {{- toYaml .Values.service.loadBalancerSourceRanges | nindent 4 }}
+  {{- if and (eq .Values.uptrace.service.type "LoadBalancer") (not (empty .Values.uptrace.service.loadBalancerSourceRanges)) }}
+  loadBalancerSourceRanges: {{- toYaml .Values.uptrace.service.loadBalancerSourceRanges | nindent 4 }}
   {{- end }}
