@@ -7,6 +7,11 @@ metadata:
     {{- include "uptrace.labels" . | nindent 4 }}
 spec:
   mode: sidecar
+  env:
+  - name: K8S_NODE_NAME
+    valueFrom:
+      fieldRef:
+        fieldPath: spec.nodeName
   config: |
     receivers:
       kubeletstats:
