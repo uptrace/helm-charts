@@ -1,5 +1,5 @@
-{{ if .Values.otelcol.enabled }}
-apiVersion: opentelemetry.io/v1alpha1
+{{ if .Values.otelcolSidecar.enabled }}
+apiVersion: opentelemetry.io/v1beta1
 kind: OpenTelemetryCollector
 metadata:
   name: sidecar-for-my-app
@@ -7,28 +7,5 @@ metadata:
     {{- include "uptrace.labels" . | nindent 4 }}
 spec:
   mode: sidecar
-  config: |
-    receivers:
-      kubeletstats:
-        collection_interval: 15s
-        auth_type: "serviceAccount"
-        endpoint: "https://${env:K8S_NODE_NAME}:10250"
-        insecure_skip_verify: true
-
-    processors:
-      batch:
-        send_batch_size: 10000
-        timeout: 10s
-
-    exporters:
-      debug:
-      otlp/local:
-        {{- .Values.otelcol.otlpExporter | toYaml | nindent 8 }}
-
-    service:
-      pipelines:
-        metrics:
-          receivers: [kubeletstats]
-          processors: [batch]
-          exporters: [debug, otlp/local]
+  config: {{ .Values.otelcolSidecar.config | toYaml | nindent 4 }}
 {{ end }}
