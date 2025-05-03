@@ -33,7 +33,7 @@ clickhouse:
   image:
     repository: clickhouse/clickhouse-server
     pullPolicy: IfNotPresent
-    tag: '23.11'
+    tag: '25.3'
 
   persistence:
     enabled: true
@@ -69,7 +69,7 @@ postgresql:
   image:
     repository: postgres
     pullPolicy: IfNotPresent
-    tag: '15-alpine'
+    tag: '17-alpine'
 
   persistence:
     enabled: true
@@ -110,11 +110,6 @@ otelcol:
       k8s_cluster:
         auth_type: serviceAccount
         collection_interval: 15s
-      kubeletstats:
-        collection_interval: 15s
-        auth_type: 'serviceAccount'
-        endpoint: 'https://${env:K8S_NODE_NAME}:10250'
-        insecure_skip_verify: true
     processors:
       resourcedetection:
         detectors: ['system']
@@ -168,7 +163,7 @@ otelcolSidecar:
       kubeletstats:
         collection_interval: 15s
         auth_type: 'serviceAccount'
-        endpoint: 'https://${env:K8S_NODE_NAME}:10250'
+        endpoint: 'https://${env:OTEL_RESOURCE_ATTRIBUTES_NODE_NAME}:10250'
         insecure_skip_verify: true
 
     processors:
@@ -226,8 +221,8 @@ uptrace:
 
   service:
     type: ClusterIP # or LoadBalancer
-    http_port: 14318
-    grpc_port: 14317
+    http_port: 80
+    grpc_port: 4317
     annotations:
       {}
       # service.beta.kubernetes.io/aws-load-balancer-type: "external"
@@ -268,93 +263,100 @@ uptrace:
     ##
 
     ##
+    ## Logging configuration options.
+    ##
+    logging:
+      # Valid values: DEBUG, INFO, WARN, ERROR.
+      level: INFO
+
+    ##
+    ## Service configuration options.
+    ##
+    service:
+      env: hosted
+      secret: 'FIXME'
+
+    ##
+    ## Authentication configuration options.
+    ##
+    auth:
+      # Disable auth using login and password.
+      # SSO auth will still be available.
+      #disabled: true
+
+      # The following users will be created on the first startup.
+      users:
+        - name: Admin
+          email: admin@uptrace.local
+          password: admin
+
+    ##
+    ## Site configuration options.
+    ##
+    site:
+      url: 'http://uptrace.local'
+
+    ##
     ## ClickHouse database credentials.
     ##
-    ch:
-      addr: uptrace-clickhouse:9000
-      user: default
-      password:
-      database: uptrace
+    ch_cluster:
+      cluster: 'uptrace1'
+      # Whether to use ClickHouse replication.
+      # Cluster name is required when replication is enabled.
+      replicated: false
+      # Whether to use ClickHouse distributed tables.
+      distributed: false
 
-      # TLS configuration. Uncomment to enable.
-      # tls:
-      #   insecure_skip_verify: true # only for self-signed certificates
+      shards:
+        - replicas:
+            - addr: 'uptrace-clickhouse:9000'
+              database: uptrace
+              user: uptrace
+              password: uptrace
 
-      # Maximum query execution time.
-      max_execution_time: 30s
+              dial_timeout: 3s
+              write_timeout: 5s
+              max_retries: 3
 
-    ##
-    ## SQLite/PostgreSQL db that is used to store metadata such us metric names, dashboards, alerts,
-    ## and so on.
-    ##
-    pg:
-      addr: uptrace-postgresql:5432
-      user: uptrace
-      password: uptrace
-      database: uptrace
-      #tls: { insecure_skip_verify: true }
-
-    auth:
-      users:
-        - name: Anonymous
-          email: uptrace@localhost
-          password: uptrace
-          notify_by_email: true
-
-      # Cloudflare Zero Trust Access (Identity)
-      # See https://developers.cloudflare.com/cloudflare-one/identity/ for more info.
-      # cloudflare:
-      #   # The base URL of the Cloudflare Zero Trust team.
-      #   - team_url: https://myteam.cloudflareaccess.com
-      #     # The Application Audience (AUD) Tag for this application.
-      #     # You can retrieve this from the Cloudflare Zero Trust 'Access' Dashboard.
-      #     audience: bea6df23b944e4a0cd178609ba1bb64dc98dfe1f66ae7b918e563f6cf28b37e0
-
-      # OpenID Connect (Single Sign-On)
-      # oidc:
-      #   # The ID is used in API endpoints, for example, in redirect URL
-      #   # `http://<uptrace-host>/api/v1/sso/<oidc-id>/callback`.
-      #   - id: keycloak
-      #     # Display name for the button in the login form.
-      #     # Default to 'OpenID Connect'
-      #     display_name: Keycloak
-      #     # The base URL for the OIDC provider.
-      #     issuer_url: http://localhost:8080/realms/uptrace
-      #     # The OAuth 2.0 Client ID
-      #     client_id: uptrace
-      #     # The OAuth 2.0 Client Secret
-      #     client_secret: ogbhd8Q0X0e5AZFGSG3m9oirPvnetqkA
-      #     # Additional OAuth 2.0 scopes to request from the OIDC provider.
-      #     # Defaults to 'profile'. 'openid' is requested by default and need not be specified.
-      #     scopes:
-      #       - profile
-      #     # The OIDC UserInfo claim to use as the user's username.
-      #     # Defaults to 'preferred_username'.
-      #     claim: preferred_username
+              max_execution_time: 15s
 
     ##
     ## Various options to tweak ClickHouse schema.
     ## For changes to take effect, you need reset the ClickHouse database with `ch reset`.
     ##
     ch_schema:
-      # Compression codec, for example, LZ4, ZSTD(3), or Default.
-      compression: ZSTD(3)
-
-      # Whether to use Replicated* engines.
-      replicated: false
-
-      # Cluster name for Distributed tables and ON CLUSTER clause.
-      #cluster: uptrace1
+      # Compression codec, for example, LZ4, ZSTD(1), or Default.
+      compression: ZSTD(1)
 
       spans:
-        # Delete spans data after 30 days.
-        ttl_delete: 7 DAY
         storage_policy: 'default'
+        ttl_delete: 14 DAY
+
+      logs:
+        storage_policy: 'default'
+        ttl_delete: 14 DAY
+
+      events:
+        storage_policy: 'default'
+        ttl_delete: 14 DAY
 
       metrics:
-        # Delete metrics data after 90 days.
-        ttl_delete: 30 DAY
         storage_policy: 'default'
+        ttl_delete: 14 DAY
+
+    ##
+    ## PostgreSQL database credentials. The main database stores 99% of data
+    ## such as users, projects, dashboards, etc.
+    ##
+    pg:
+      addr: 'uptrace-postgresql:5432'
+      user: uptrace
+      password: uptrace
+      database: uptrace
+
+      # TLS configuration. Uncomment to enable.
+      # tls:
+      #   insecure_skip_verify: true # only for self-signed certificates
 
     ##
     ## Addresses on which Uptrace receives gRPC and HTTP requests.
@@ -362,90 +364,121 @@ uptrace:
     listen:
       # OTLP/gRPC API.
       grpc:
-        addr: ':14317'
+        addr: ':4317'
+        # tls:
+        #   cert_file: config/tls/uptrace.crt
+        #   key_file: config/tls/uptrace.key
 
       # OTLP/HTTP API and Uptrace API with Vue UI.
       http:
-        addr: ':14318'
-
-      # tls:
-      #   cert_file: config/tls/uptrace.crt
-      #   key_file: config/tls/uptrace.key
+        addr: ':80'
+        # tls:
+        #   cert_file: config/tls/uptrace.crt
+        #   key_file: config/tls/uptrace.key
 
     ##
-    ## Various options for Uptrace UI.
+    ## TLS certificate issuance and renewal using Let's Encrypt.
     ##
-    site:
-      # Overrides public URL for Vue-powered UI.
-      addr: 'http://localhost:14318/'
+    certmagic:
+      # Use Let's Encrypt to obtain certificates.
+      enabled: false
+      # Use Let's Encrypt staging environment.
+      staging_ca: false
+      http_challenge_addr: ':80'
+
+    ##
+    ## To receive email notifications, configure a mailer.
+    ## https://uptrace.dev/features/alerting
+    ##
+    mailer:
+      smtp:
+        # Whether to use this mailer for sending emails.
+        enabled: false
+        # SMTP server host.
+        host: localhost
+        # SMTP server port.
+        port: 1025
+        # Username for authentication.
+        username: mailhog
+        # Password for authentication.
+        password: mailhog
+        # Uncomment to disable opportunistic TLS.
+        #tls: { disabled: true }
+        # Emails will be send from this address.
+        from: 'uptrace@uptrace.local'
 
     ##
     ## Spans processing options.
     ##
     spans:
-      # The size of the Go chan used to buffer incoming spans.
-      # If the buffer is full, Uptrace starts to drop spans.
-      #buffer_size: 100000
+      max_buffered_records: 100e3
+      max_insert_size: 10000
+      #max_threads: 10
 
-      # The number of spans to insert in a single query.
-      #batch_size: 10000
+    ##
+    ## Logs processing options.
+    ##
+    logs:
+      max_buffered_records: 100e3
+      max_insert_size: 10000
+      #max_threads: 10
+
+    ##
+    ## Events processing options.
+    ##
+    events:
+      max_buffered_records: 100e3
+      max_insert_size: 10000
+      #max_threads: 10
 
     ##
     ## Metrics processing options.
     ##
     metrics:
-      # List of attributes to drop for being noisy.
-      drop_attrs:
-        - telemetry_sdk_language
-        - telemetry_sdk_name
-        - telemetry_sdk_version
+      max_buffered_records: 100e3
+      max_insert_size: 10000
+      cum_point_storage_size: 100000
 
-      # The size of the Go chan used to buffer incoming measures.
-      # If the buffer is full, Uptrace starts to drop measures.
-      #buffer_size: 100000
-
-      # The number of measures to insert in a single query.
-      #batch_size: 10000
-
-      # The size of the buffer for converting cumulative metrics to delta.
-      #cum_to_delta_size: 100000
+    ###
+    ### Service graph processing options.
+    ###
+    service_graph:
+      # Uncomment to disable.
+      #disabled: true
 
     ##
-    ## SMTP settings to send emails.
-    ## https://uptrace.dev/get/alerting.html
+    ## Sourcemaps processing options for JavaScript errors.
+    ## Sourcemaps require Internet access to download source maps.
     ##
-    smtp_mailer:
-      enabled: false
-      host: localhost
-      port: 1025
-      username: mailhog
-      password: mailhog
-      from: 'uptrace@localhost'
+    sourcemaps:
+      # Uncomment to disable.
+      #disabled: true
+
+    ##
+    ## Redis database credentials for go-redis RedisRing client.
+    ##
+    redis_cache:
+      addrs:
+        1: 'localhost:6379'
 
     ##
     ## uptrace-go client configuration.
-    ## Uptrace sends internal telemetry here. Defaults to listen.grpc.addr.
+    ## Uptrace sends internal telemetry here.
     ##
     uptrace_go:
-      # dsn: http://project1_secret@localhost:14317/1
-      # tls:
-      #   cert_file: config/tls/uptrace.crt
-      #   key_file: config/tls/uptrace.key
-      #   insecure_skip_verify: true
+      # Uncomment to disable.
+      #disabled: false
+      dsn: http://project1_secret@uptrace.local:80/2?grpc=4317
 
     ##
-    ## Logging configuration.
+    ## Token for the Telegram bot that will be sending notifications to Telegram channels.
+    ## Required if you are planning to use Telegram for notifications.
     ##
-    logging:
-      # Zap minimal logging level.
-      # Valid values: DEBUG, INFO, WARN, ERROR, DPANIC, PANIC, FATAL.
-      level: INFO
-
-    # Secret key that is used to sign JWT tokens etc.
-    secret_key: 102c1a557c314fc28198acd017960843
-
-    # Enable to log HTTP requests and database queries.
-    debug: false
+    ## To create a new bot, follow this guide:
+    ## https://sendpulse.com/knowledge-base/chatbot/telegram/create-telegram-chatbot
+    ##
+    telegram:
+      bot_token: ''
 
   resources:
     {}
