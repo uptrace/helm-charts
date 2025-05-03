@@ -15,10 +15,8 @@ spec:
       {{- include "uptrace.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
       annotations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+        {{- toYaml .Values.podAnnotations | nindent 8 }}
       labels:
         app: clickhouse
         {{- include "uptrace.selectorLabels" . | nindent 8 }}
@@ -33,7 +31,7 @@ spec:
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
+            {{- toYaml .Values.containerSecurityContext | nindent 12 }}
           image: "{{ .Values.clickhouse.image.repository }}:{{ .Values.clickhouse.image.tag | default "latest" }}"
           imagePullPolicy: {{ .Values.clickhouse.image.pullPolicy }}
           env:

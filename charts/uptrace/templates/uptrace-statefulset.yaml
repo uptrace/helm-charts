@@ -15,8 +15,8 @@ spec:
   template:
     metadata:
       annotations:
+        {{- toYaml .Values.podAnnotations | nindent 8 }}
         checksum/config: {{ .Values.uptrace.config | toYaml | sha256sum }}
-        sidecar.opentelemetry.io/inject: 'true'
       labels:
         app: uptrace
         {{- include "uptrace.selectorLabels" . | nindent 8 }}
@@ -31,7 +31,7 @@ spec:
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
+            {{- toYaml .Values.containerSecurityContext | nindent 12 }}
           image: "{{ .Values.uptrace.image.repository }}:{{ .Values.uptrace.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.uptrace.image.pullPolicy }}
           volumeMounts:
