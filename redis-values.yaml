@@ -1,0 +1,5 @@
+# https://github.com/bitnami/charts/tree/main/bitnami/redis#parameters
+
+auth:
+  # Disable password authentication.
+  enabled: false

@@ -30,7 +30,7 @@ delete: uninstall
 	kubectl delete all,pvc,cm --all -n $(NAMESPACE)
 
 upgrade:
-	helm upgrade $(RELEASE_NAME) -n $(NAMESPACE) --create-namespace
+	helm upgrade $(RELEASE_NAME) ./charts/uptrace -n $(NAMESPACE) --create-namespace
 
 list:
 	kubectl get all -n $(NAMESPACE)
@@ -41,3 +41,6 @@ list-all:
 re-install: delete install
 
 purge: delete delete-namespace
+
+secrets:
+	kubectl get secrets -n monitoring

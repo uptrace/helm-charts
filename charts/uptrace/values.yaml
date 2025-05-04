@@ -25,6 +25,15 @@ containerSecurityContext:
   # runAsNonRoot: true
   # runAsUser: 1000
 
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ''
+
 clickhouse:
   enabled: true
   replicaCount: 1
@@ -106,7 +115,7 @@ otelcol:
       otlp:
         protocols:
           grpc: {}
-          http:: {}
+          http: {}
       k8s_cluster:
         auth_type: serviceAccount
         collection_interval: 15s
@@ -130,7 +139,7 @@ otelcol:
           processors: [batch]
           exporters: [otlp/local]
         metrics:
-          receivers: [otlp, k8s_cluster, kubeletstats]
+          receivers: [otlp, k8s_cluster]
           processors: [cumulativetodelta, batch]
           exporters: [debug, otlp/local]
         logs:
@@ -172,7 +181,7 @@ otelcolSidecar:
         timeout: 10s
 
     exporters:
-      debug:
+      debug: {}
       otlp/local:
         endpoint: http://my-uptrace:4317
         tls: { insecure: true }
@@ -184,15 +193,6 @@ otelcolSidecar:
           receivers: [kubeletstats]
           processors: [batch]
           exporters: [debug, otlp/local]
-
-serviceAccount:
-  # Specifies whether a service account should be created
-  create: true
-  # Annotations to add to the service account
-  annotations: {}
-  # The name of the service account to use.
-  # If not set and create is true, a name is generated using the fullname template
-  name: ''
 
 ingress:
   enabled: true
@@ -366,10 +366,10 @@ uptrace:
     ## such as users, projects, dashboards, etc.
     ##
     pg:
-      addr: 'uptrace-postgresql:5432'
-      user: uptrace
-      password: uptrace
-      database: uptrace
+      addr: 'uptrace-postgresql-rw:5432'
+      user: ${PG_USER:uptrace}
+      password: ${PG_PASSWORD:uptrace}
+      database: ${PG_DATABASE:uptrace}
 
       # TLS configuration. Uncomment to enable.
       # tls:
@@ -476,7 +476,7 @@ uptrace:
     ##
     redis_cache:
       addrs:
-        1: 'localhost:6379'
+        alpha: 'redis-master:6379'
 
     ##
     ## uptrace-go client configuration.
@@ -485,7 +485,7 @@ uptrace:
     uptrace_go:
       # Uncomment to disable.
       #disabled: false
-      dsn: http://project1_secret@uptrace.local:80/2?grpc=4317
+      dsn: http://project1_secret@uptrace:80?grpc=4317
 
     ##
     ## Token for the Telegram bot that will be sending notifications to Telegram channels.

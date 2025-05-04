@@ -22,20 +22,20 @@ helm repo update uptrace
 Install Uptrace:
 
 ```shell
-helm install -n uptrace --create-namespace my-uptrace uptrace/uptrace
+helm install -n monitoring --create-namespace uptrace uptrace/uptrace
 ```
 
 View available pods and logs:
 
 ```shell
-kubectl get pods -n uptrace
-kubectl logs my-uptrace-0 -n uptrace
+kubectl get pods -n monitoring
+kubectl logs my-uptrace-0 -n monitoring
 ```
 
 The Uptrace UI is served via the Ingress on [http://uptrace.local](http://uptrace.local):
 
 ```shell
-kubectl get -n uptrace ingress
+kubectl get -n monitoring ingress
 
 NAME         CLASS   HOSTS           ADDRESS        PORTS   AGE
 my-uptrace   nginx   uptrace.local   192.168.49.2   80      73s
@@ -63,13 +63,13 @@ helm repo add uptrace https://charts.uptrace.dev
 To install Uptrace chart in `uptrace` namespace:
 
 ```shell
-helm install -n uptrace --create-namespace my-uptrace uptrace/uptrace
+helm install -n monitoring --create-namespace my-uptrace uptrace/uptrace
 ```
 
 To list Uptrace pods:
 
 ```shell
-kubectl get pods -n uptrace
+kubectl get pods -n monitoring
 
 NAME                      READY   STATUS    RESTARTS   AGE
 clickhouse-my-uptrace-0   1/1     Running   0          59s
@@ -80,7 +80,7 @@ my-uptrace-zookeeper-0    1/1     Running   0          59s
 To view Uptrace logs:
 
 ```shell
-kubectl logs my-uptrace-0 -n uptrace
+kubectl logs my-uptrace-0 -n monitoring
 ```
 
 ## Upgrading
@@ -94,7 +94,7 @@ helm repo update
 To upgrade to the latest available version:
 
 ```shell
-helm -n uptrace upgrade my-uptrace uptrace/uptrace
+helm -n monitoring upgrade my-uptrace uptrace/uptrace
 ```
 
 ## Ingress
@@ -165,7 +165,7 @@ auth:
 Then launch a ClickHouse cluster:
 
 ```shell
-helm install -n uptrace clickhouse oci://registry-1.docker.io/bitnamicharts/clickhouse -f clickhouse-values.yaml
+helm install -n monitoring clickhouse oci://registry-1.docker.io/bitnamicharts/clickhouse -f clickhouse-values.yaml
 ```
 
 Create `uptrace-values.yaml`:
@@ -191,7 +191,7 @@ clickhouse:
 Then launch Uptrace:
 
 ```shell
-helm install -n uptrace uptrace uptrace/uptrace -f uptrace-values.yaml
+helm install -n monitoring uptrace uptrace/uptrace -f uptrace-values.yaml
 ```
 
 To connect to the ClickHouse database:
@@ -227,7 +227,7 @@ service:
 To uninstall Uptrace chart:
 
 ```shell
-helm -n uptrace uninstall my-uptrace
+helm -n monitoring uninstall my-uptrace
 ```
 
 To delete Uptrace namespace:

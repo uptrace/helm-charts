@@ -56,6 +56,26 @@ spec:
               port: http
           {{ end }}
           env:
+            - name: PG_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: uptrace-postgresql-app
+                  key: host
+            - name: PG_USER
+              valueFrom:
+                secretKeyRef:
+                  name: uptrace-postgresql-app
+                  key: username
+            - name: PG_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: uptrace-postgresql-app
+                  key: password
+            - name: PG_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: uptrace-postgresql-app
+                  key: dbname
             {{- toYaml .Values.uptrace.env | nindent 12 }}
           envFrom:
             {{- toYaml .Values.uptrace.envFrom | nindent 12 }}

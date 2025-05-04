@@ -37,6 +37,10 @@ spec:
           env:
             - name: CLICKHOUSE_DB
               value: uptrace
+            - name: CLICKHOUSE_USER
+              value: uptrace
+            - name: CLICKHOUSE_PASSWORD
+              value: uptrace
           {{- if .Values.clickhouse.persistence.enabled }}
           volumeMounts:
           - name: uptrace-clickhouse-data
