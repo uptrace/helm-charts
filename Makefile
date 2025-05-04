@@ -1,5 +1,5 @@
-NAMESPACE := uptrace
-RELEASE_NAME := my-uptrace
+NAMESPACE := monitoring
+RELEASE_NAME := uptrace
 
 init:
 	minikube start
@@ -12,19 +12,19 @@ delete-namespace:
 	kubectl delete namespace $(NAMESPACE)
 
 debug:
-	helm install --dry-run --debug $(RELEASE_NAME) ./charts/uptrace
+	helm install -n $(NAMESPACE) --dry-run --debug $(RELEASE_NAME) ./charts/uptrace
 
 lint:
 	helm lint --strict --set "cloud=local" ./charts/uptrace
 
-install: create-namespace
-	helm install $(RELEASE_NAME) ./charts/uptrace -n $(NAMESPACE)
+install:
+	helm install $(RELEASE_NAME) ./charts/uptrace -n $(NAMESPACE) --create-namespace
 
 uninstall: delete-namespace
 	helm uninstall -n $(NAMESPACE) $(RELEASE_NAME)
 
 logs:
-	kubectl logs my-uptrace-0 -n uptrace
+	kubectl logs $(RELEASE_NAME)-0 -n $(NAMESPACE)
 
 delete: uninstall
 	kubectl delete all,pvc,cm --all -n $(NAMESPACE)

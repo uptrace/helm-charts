@@ -21,13 +21,13 @@ version: '1.7.7'
 # incremented each time you make changes to the application. Versions are not expected to
 # follow Semantic Versioning. They should reflect the version the application is using.
 # It is recommended to use it with quotes.
-appVersion: '1.7.7'
+appVersion: 'v2.0.0-beta.1'
 
 annotations:
   artifacthub.io/category: monitoring-logging
   artifacthub.io/links: |
     - name: Uptrace Open Source APM
-      url: https://uptrace.dev/get/open-source-apm.html
+      url: https://uptrace.dev/get/hosted/open-source-apm
   artifacthub.io/screenshots: |
     - title: Uptrace screenshot
-      url: https://uptrace.dev/get/uptrace/home.png
+      url: https://uptrace.dev/home/screenshots/apm.png

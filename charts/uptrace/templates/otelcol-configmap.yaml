@@ -7,5 +7,6 @@ metadata:
     app: otelcontribcol
     {{- include "uptrace.labels" . | nindent 4 }}
 data:
-  config.yaml: {{ .Values.otelcol.config | toYaml | nindent 4 }}
+  config.yaml: |
+{{ .Values.otelcol.config | toYaml | indent 4 }}
 {{ end }}

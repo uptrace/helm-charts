@@ -8,7 +8,7 @@ fullnameOverride: ''
 # Annotations for pod templates.
 podAnnotations:
   # Whether to inject OpenTelemetry sidecar to gather metrics.
-  sidecar.opentelemetry.io/inject: true
+  sidecar.opentelemetry.io/inject: 'true'
 
 # Security context for pod templates.
 podSecurityContext:
@@ -105,8 +105,8 @@ otelcol:
     receivers:
       otlp:
         protocols:
-          grpc:
-          http:
+          grpc: {}
+          http:: {}
       k8s_cluster:
         auth_type: serviceAccount
         collection_interval: 15s
@@ -118,7 +118,7 @@ otelcol:
         send_batch_size: 10000
         timeout: 15s
     exporters:
-      debug:
+      debug: {}
       otlp/local:
         endpoint: http://my-uptrace:4317
         tls: { insecure: true }
@@ -245,6 +245,23 @@ uptrace:
   ## You can use those variables in uptrace.config
   ## https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/#define-an-environment-variable-for-a-container
   envFrom: []
+
+  resources:
+    {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
 
   config:
     ##
@@ -479,20 +496,3 @@ uptrace:
     ##
     telegram:
       bot_token: ''
-
-  resources:
-    {}
-    # We usually recommend not to specify default resources and to leave this as a conscious
-    # choice for the user. This also increases chances charts run on environments with little
-    # resources, such as Minikube. If you do want to specify resources, uncomment the following
-    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-    # limits:
-    #   cpu: 100m
-    #   memory: 128Mi
-    # requests:
-    #   cpu: 100m
-    #   memory: 128Mi
-
-  nodeSelector: {}
-  tolerations: []
-  affinity: {}

@@ -2,11 +2,13 @@
 
 ## Quickstart
 
+Install [Helm](https://helm.sh/docs/intro/install/).
+
 Install [cert-manager](https://cert-manager.io/docs/installation/) and
 [OpenTelemetry Operator](https://github.com/open-telemetry/opentelemetry-operator):
 
 ```shell
-kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.13.3/cert-manager.yaml
+kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.17.2/cert-manager.yaml
 kubectl apply -f https://github.com/open-telemetry/opentelemetry-operator/releases/latest/download/opentelemetry-operator.yaml
 ```
 

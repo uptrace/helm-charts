@@ -36,7 +36,7 @@ spec:
           imagePullPolicy: {{ .Values.uptrace.image.pullPolicy }}
           volumeMounts:
             - name: config
-              mountPath: /etc/uptrace/uptrace.yml
+              mountPath: /etc/uptrace/config.yml
               subPath: uptrace.yml
           ports:
             - name: http
@@ -45,7 +45,7 @@ spec:
             - name: grpc
               containerPort: {{ .Values.uptrace.service.grpc_port }}
               protocol: TCP
-          {{ with .Values.uptrace.config.site.addr | urlParse }}
+          {{ with .Values.uptrace.config.site.url | urlParse }}
           livenessProbe:
             httpGet:
               path: {{ .path }}
