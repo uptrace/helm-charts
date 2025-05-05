@@ -4,19 +4,13 @@ kind: Cluster
 metadata:
   name: uptrace-postgresql
 spec:
-  imageName: ghcr.io/cloudnative-pg/postgresql:17
-  instances: 3
+  imageName: {{ .Values.postgresql.imageNname }}
+  imagePullSecrets:
+    {{- toYaml .Values.postgresql.imagePullSecrets | nindent 4 }}
+
+  instances: {{ .Values.postgresql.instances }}
 
   storage:
-    size: 1Gi
-
-  managed:
-    roles:
-      - name: {{ .Values.uptrace.config.pg.user }}
-        ensure: present
-        createdb: true
-        login: true
-        superuser: true
-        passwordSecret:
-          name: uptrace-postgresql-secret
+    storageClass: {{ .Values.postgresql.storage.storageClass }}
+    size: {{ .Values.postgresql.storage.size }}
 {{- end }}

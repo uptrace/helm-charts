@@ -74,20 +74,14 @@ clickhouse:
 postgresql:
   enabled: true
 
+  imageName: ghcr.io/cloudnative-pg/postgresql:17.4
   imagePullSecrets: []
-  image:
-    repository: postgres
-    pullPolicy: IfNotPresent
-    tag: '17-alpine'
 
-  persistence:
-    enabled: true
-    storageClassName: '' # leave empty to use the default storage class
-    size: 8Gi
+  instances: 3
 
-  service:
-    type: ClusterIP
-    port: 5432
+  storage:
+    storageClass: standard
+    size: 4Gi
 
   resources:
     {}
