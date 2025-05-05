@@ -74,14 +74,14 @@ clickhouse:
 postgresql:
   enabled: true
 
-  imageName: ghcr.io/cloudnative-pg/postgresql:17.4
+  imageName: ghcr.io/cloudnative-pg/postgresql:17
   imagePullSecrets: []
 
   instances: 3
 
   storage:
-    storageClass: standard
     size: 4Gi
+    storageClass: ''
 
   resources:
     {}
@@ -314,13 +314,13 @@ uptrace:
       cluster: 'uptrace1'
       # Whether to use ClickHouse replication.
       # Cluster name is required when replication is enabled.
-      replicated: false
+      replicated: true
       # Whether to use ClickHouse distributed tables.
       distributed: false
 
       shards:
         - replicas:
-            - addr: 'uptrace-clickhouse:9000'
+            - addr: 'clickhouse-uptrace1:9000'
               database: uptrace
               user: uptrace
               password: uptrace

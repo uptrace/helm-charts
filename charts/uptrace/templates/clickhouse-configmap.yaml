@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: 'ConfigMap'
+metadata:
+  name: clickhouse-bootstrap-configmap
+data:
+  01_create_databases.sh: |
+    #!/bin/bash
+    set -e
+    clickhouse client -n <<-EOSQL
+      CREATE DATABASE IF NOT EXISTS uptrace;
+    EOSQL

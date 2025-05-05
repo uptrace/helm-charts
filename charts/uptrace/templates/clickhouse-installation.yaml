@@ -1,0 +1,63 @@
+apiVersion: 'clickhouse.altinity.com/v1'
+kind: 'ClickHouseInstallation'
+
+metadata:
+  name: 'uptrace1'
+  labels:
+    app: clickhouse
+    {{- include "uptrace.labels" . | nindent 4 }}
+  annotations:
+    {{- toYaml .Values.podAnnotations | nindent 4 }}
+
+spec:
+  configuration:
+    users:
+      # printf 'uptrace' | sha256sum
+      uptrace/password_sha256_hex: 445af3990944c398ed9733d476360d9d6ccad39c04db52e615839bb928463f90
+      uptrace/networks/ip:
+        - 0.0.0.0/0
+    clusters:
+      - name: 'uptrace1'
+        layout:
+          shardsCount: 1
+          replicasCount: 2
+
+  defaults:
+    templates:
+      podTemplate: pod-template
+      dataVolumeClaimTemplate: data-volume-template
+      logVolumeClaimTemplate: log-volume-template
+
+  templates:
+    podTemplates:
+      - name: pod-template
+        spec:
+          containers:
+            - name: clickhouse
+              image: clickhouse/clickhouse-server:25.3
+              env:
+                - name: CLICKHOUSE_ALWAYS_RUN_INITDB_SCRIPTS
+                  value: 'true'
+              volumeMounts:
+                - name: bootstrap-configmap-volume
+                  mountPath: /docker-entrypoint-initdb.d
+          volumes:
+            - name: bootstrap-configmap-volume
+              configMap:
+                name: clickhouse-bootstrap-configmap
+
+    volumeClaimTemplates:
+      - name: data-volume-template
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 10Gi
+      - name: log-volume-template
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 1Gi

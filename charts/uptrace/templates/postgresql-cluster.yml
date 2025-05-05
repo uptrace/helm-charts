@@ -1,8 +1,15 @@
 {{- if .Values.postgresql.enabled }}
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
+
 metadata:
   name: uptrace-postgresql
+  labels:
+    app: clickhouse
+    {{- include "uptrace.labels" . | nindent 4 }}
+  annotations:
+    {{- toYaml .Values.podAnnotations | nindent 4 }}
+
 spec:
   imageName: {{ .Values.postgresql.imageNname }}
   imagePullSecrets:
@@ -11,6 +18,8 @@ spec:
   instances: {{ .Values.postgresql.instances }}
 
   storage:
-    storageClass: {{ .Values.postgresql.storage.storageClass }}
     size: {{ .Values.postgresql.storage.size }}
+    {{- if .Values.postgresql.storage.storageClass }}
+    storageClass: {{ .Values.postgresql.storage.storageClass }}
+    {{- end }}
 {{- end }}
