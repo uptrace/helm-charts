@@ -1,0 +1,54 @@
+uptrace:
+  config:
+    ##
+    ## Uptrace configuration file.
+    ## See https://uptrace.dev/get/config.html for details.
+    ##
+
+    ##
+    ## Service configuration options.
+    ##
+    service:
+      env: hosted
+      secret: 'FIXME'
+
+    ##
+    ## Site configuration options.
+    ##
+    site:
+      url: 'http://uptrace.local'
+
+    ##
+    ## Authentication configuration options.
+    ##
+    auth:
+      # Disable auth using login and password.
+      # SSO auth will still be available.
+      #disabled: true
+
+      # The following users will be created on the first startup.
+      users:
+        - name: Admin
+          email: admin@uptrace.local
+          password: admin
+
+    ##
+    ## To receive email notifications, configure a mailer.
+    ## https://uptrace.dev/features/alerting
+    ##
+    mailer:
+      smtp:
+        # Whether to use this mailer for sending emails.
+        enabled: false
+        # SMTP server host.
+        host: localhost
+        # SMTP server port.
+        port: 1025
+        # Username for authentication.
+        username: mailhog
+        # Password for authentication.
+        password: mailhog
+        # Uncomment to disable opportunistic TLS.
+        #tls: { disabled: true }
+        # Emails will be send from this address.
+        from: 'uptrace@uptrace.local'
