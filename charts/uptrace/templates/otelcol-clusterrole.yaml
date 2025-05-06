@@ -8,13 +8,14 @@ metadata:
     {{- include "uptrace.labels" . | nindent 4 }}
 rules:
   - apiGroups:
-      - ''
+      - ""
     resources:
       - events
       - namespaces
       - namespaces/status
       - nodes
       - nodes/spec
+      - nodes/stats
       - pods
       - pods/status
       - replicationcontrollers

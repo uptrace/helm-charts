@@ -8,7 +8,9 @@ metadata:
     app: clickhouse
     {{- include "uptrace.labels" . | nindent 4 }}
   annotations:
+    {{- with .Values.podAnnotations }}
     {{- toYaml .Values.podAnnotations | nindent 4 }}
+    {{- end }}
 
 spec:
   imageName: {{ .Values.postgresql.imageNname }}
