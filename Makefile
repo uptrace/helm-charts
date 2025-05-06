@@ -20,7 +20,7 @@ lint:
 install:
 	helm install $(RELEASE_NAME) ./charts/uptrace -n $(NAMESPACE) --create-namespace
 
-uninstall: delete-namespace
+uninstall:
 	helm uninstall -n $(NAMESPACE) $(RELEASE_NAME)
 
 logs:
@@ -40,7 +40,9 @@ list-all:
 
 re-install: delete install
 
-purge: delete delete-namespace
+purge:
+	make delete
+	make delete-namespace
 
 secrets:
 	kubectl get secrets -n monitoring

@@ -8,7 +8,7 @@ fullnameOverride: ''
 # Annotations for pod templates.
 podAnnotations:
   # Whether to inject OpenTelemetry sidecar to gather metrics.
-  sidecar.opentelemetry.io/inject: 'true'
+  foo: 'true'
 
 # Security context for pod templates.
 podSecurityContext:
@@ -123,9 +123,9 @@ otelcol:
     exporters:
       debug: {}
       otlp/local:
-        endpoint: http://my-uptrace:4317
+        endpoint: http://uptrace:4317
         tls: { insecure: true }
-        headers: { 'uptrace-dsn': 'http://project1_secret@localhost?grpc=4317' }
+        headers: { 'uptrace-dsn': 'http://project1_secret@uptrace.local?grpc=4317' }
     service:
       pipelines:
         traces:
@@ -166,10 +166,11 @@ otelcolSidecar:
       kubeletstats:
         collection_interval: 15s
         auth_type: 'serviceAccount'
-        endpoint: 'https://${env:OTEL_RESOURCE_ATTRIBUTES_NODE_NAME}:10250'
+        endpoint: 'https://${env:K8S_NODE_NAME}:10250'
         insecure_skip_verify: true
 
     processors:
+      k8sattributes: {}
       batch:
         send_batch_size: 10000
         timeout: 10s
@@ -177,9 +178,9 @@ otelcolSidecar:
     exporters:
       debug: {}
       otlp/local:
-        endpoint: http://my-uptrace:4317
+        endpoint: http://uptrace:4317
         tls: { insecure: true }
-        headers: { 'uptrace-dsn': 'http://project1_secret@localhost?grpc=4317' }
+        headers: { 'uptrace-dsn': 'http://project1_secret@uptrace.local?grpc=4317' }
 
     service:
       pipelines:
@@ -314,7 +315,7 @@ uptrace:
       cluster: 'uptrace1'
       # Whether to use ClickHouse replication.
       # Cluster name is required when replication is enabled.
-      replicated: true
+      replicated: false
       # Whether to use ClickHouse distributed tables.
       distributed: false
 

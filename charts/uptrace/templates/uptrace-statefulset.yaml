@@ -15,8 +15,8 @@ spec:
   template:
     metadata:
       annotations:
-        {{- toYaml .Values.podAnnotations | nindent 8 }}
         checksum/config: {{ .Values.uptrace.config | toYaml | sha256sum }}
+        {{- toYaml .Values.podAnnotations | nindent 8 }}
       labels:
         app: uptrace
         {{- include "uptrace.selectorLabels" . | nindent 8 }}

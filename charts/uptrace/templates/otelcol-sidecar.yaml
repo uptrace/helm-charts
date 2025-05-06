@@ -1,11 +1,15 @@
 {{ if .Values.otelcolSidecar.enabled }}
+# https://github.com/open-telemetry/opentelemetry-operator/blob/main/docs/api/opentelemetrycollectors.md#opentelemetryiov1beta1
 apiVersion: opentelemetry.io/v1beta1
 kind: OpenTelemetryCollector
 metadata:
-  name: sidecar-for-my-app
+  name: otelcol-daemonset
   labels:
     {{- include "uptrace.labels" . | nindent 4 }}
 spec:
-  mode: sidecar
-  config: {{ .Values.otelcolSidecar.config | toYaml | nindent 4 }}
+  mode: daemonset
+  hostNetwork: true
+  serviceAccountName: otelcol
+  config:
+    {{- .Values.otelcolSidecar.config | toYaml | nindent 4 }}
 {{ end }}
