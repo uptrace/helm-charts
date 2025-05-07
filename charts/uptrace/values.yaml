@@ -505,3 +505,10 @@ uptrace:
     logging:
       # Valid values: DEBUG, INFO, WARN, ERROR.
       level: INFO
+
+    ##
+    ## License information.
+    ##
+    license:
+      data: ''
+      # path: /path/to/uptrace/license

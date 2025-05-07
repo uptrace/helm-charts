@@ -52,3 +52,10 @@ uptrace:
         #tls: { disabled: true }
         # Emails will be send from this address.
         from: 'uptrace@uptrace.local'
+
+    ##
+    ## License information.
+    ##
+    license:
+      data: ''
+      # path: /path/to/uptrace/license
