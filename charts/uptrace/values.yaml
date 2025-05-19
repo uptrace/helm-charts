@@ -373,9 +373,9 @@ uptrace:
       password: ${PG_PASSWORD:uptrace}
       database: ${PG_DATABASE:uptrace}
 
-      # TLS configuration. Uncomment to enable.
-      # tls:
-      #   insecure_skip_verify: true # only for self-signed certificates
+      # TLS client configuration. Uncomment to enable.
+      #tls:
+      #  insecure_skip_verify: true # only for self-signed certificates
 
     ##
     ## Addresses on which Uptrace receives gRPC and HTTP requests.
@@ -384,16 +384,15 @@ uptrace:
       # OTLP/gRPC API.
       grpc:
         addr: ':4317'
-        # tls:
-        #   cert_file: config/tls/uptrace.crt
-        #   key_file: config/tls/uptrace.key
 
       # OTLP/HTTP API and Uptrace API with Vue UI.
       http:
         addr: ':80'
-        # tls:
-        #   cert_file: config/tls/uptrace.crt
-        #   key_file: config/tls/uptrace.key
+
+      # TLS server configuration. Uncomment to enable.
+      #tls:
+      #  cert_file: config/tls/uptrace.crt
+      #  key_file: config/tls/uptrace.key
 
     ##
     ## TLS certificate issuance and renewal using Let's Encrypt.
