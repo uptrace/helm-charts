@@ -58,6 +58,7 @@ spec:
               port: http
           {{ end }}
           env:
+          {{- if .Values.postgresql.enabled }}
             - name: PG_HOST
               valueFrom:
                 secretKeyRef:
@@ -78,6 +79,7 @@ spec:
                 secretKeyRef:
                   name: uptrace-postgresql-app
                   key: dbname
+            {{- end }}
             {{- toYaml .Values.uptrace.env | nindent 12 }}
           envFrom:
             {{- toYaml .Values.uptrace.envFrom | nindent 12 }}
