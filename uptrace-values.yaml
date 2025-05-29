@@ -1,4 +1,6 @@
 uptrace:
+  replicaCount: 1
+
   config:
     ##
     ## Uptrace configuration file.

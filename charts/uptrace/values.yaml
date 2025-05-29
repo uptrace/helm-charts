@@ -294,7 +294,26 @@ uptrace:
     ## Site configuration options.
     ##
     site:
+      # HTTP endpoint for the UI and DSN.
+      # Unless you use a reverse proxy, the port here should match the port in the listen.http.addr.
       url: 'http://uptrace.local'
+
+    ##
+    ## Addresses on which Uptrace receives gRPC and HTTP requests.
+    ##
+    listen:
+      # OTLP/HTTP API and Uptrace API with Vue UI.
+      http:
+        addr: ':80'
+
+      # OTLP/gRPC API.
+      grpc:
+        addr: ':4317'
+
+      # TLS configuration for both HTTP and gRPC. Uncomment to enable.
+      #tls:
+      #  cert_file: config/tls/uptrace.crt
+      #  key_file: config/tls/uptrace.key
 
     ##
     ## Authentication configuration options.
@@ -309,6 +328,7 @@ uptrace:
         - name: Admin
           email: admin@uptrace.local
           password: admin
+          auth_tokens: ['user1_secret']
 
     ##
     ## ClickHouse database credentials.
@@ -376,23 +396,6 @@ uptrace:
       # TLS client configuration. Uncomment to enable.
       #tls:
       #  insecure_skip_verify: true # only for self-signed certificates
-
-    ##
-    ## Addresses on which Uptrace receives gRPC and HTTP requests.
-    ##
-    listen:
-      # OTLP/gRPC API.
-      grpc:
-        addr: ':4317'
-
-      # OTLP/HTTP API and Uptrace API with Vue UI.
-      http:
-        addr: ':80'
-
-      # TLS server configuration. Uncomment to enable.
-      #tls:
-      #  cert_file: config/tls/uptrace.crt
-      #  key_file: config/tls/uptrace.key
 
     ##
     ## TLS certificate issuance and renewal using Let's Encrypt.
