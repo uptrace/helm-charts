@@ -269,8 +269,8 @@ uptrace:
 
   config:
     ##
-    ## Uptrace configuration file.
-    ## See https://uptrace.dev/get/config.html for details.
+    ## Uptrace configuration.
+    ## See https://uptrace.dev/get/hosted/config for details.
     ##
     ## You can use environment variables anywhere in this file, for example:
     ##
@@ -369,31 +369,24 @@ uptrace:
 
       spans_index:
         storage_policy: 'default'
-        ttl_delete: 14 DAY
 
       spans_data:
         storage_policy: 'default'
-        ttl_delete: 14 DAY
 
       logs_index:
         storage_policy: 'default'
-        ttl_delete: 14 DAY
 
       logs_data:
         storage_policy: 'default'
-        ttl_delete: 14 DAY
 
       events_index:
         storage_policy: 'default'
-        ttl_delete: 14 DAY
 
       events_data:
         storage_policy: 'default'
-        ttl_delete: 14 DAY
 
       metrics:
         storage_policy: 'default'
-        ttl_delete: 14 DAY
 
     ##
     ## PostgreSQL database credentials. The main database stores 99% of data
@@ -444,33 +437,82 @@ uptrace:
     ## Spans processing options.
     ##
     spans:
-      max_buffered_records: 100e3
-      max_insert_size: 10000
+      # Max number of goroutines processing spans.
+      # Default is GOMAXPROCS.
       #max_threads: 10
+
+      # Max number of spans to insert in a single query.
+      #max_insert_size: 10000
+
+      # Max number of buffered spans. If the buffer is full, spans are dropped.
+      # Default scales linearly with max_threads.
+      #max_buffered_records: 100e3
 
     ##
     ## Logs processing options.
     ##
     logs:
-      max_buffered_records: 100e3
-      max_insert_size: 10000
+      # Max number of goroutines processing logs.
+      # Default is GOMAXPROCS.
       #max_threads: 10
+
+      # Max number of logs to insert in a single query.
+      #max_insert_size: 10000
+
+      # Max number of buffered logs. If the buffer is full, logs are dropped.
+      # Default scales linearly with max_threads.
+      #max_buffered_records: 100e3
 
     ##
     ## Events processing options.
     ##
     events:
-      max_buffered_records: 100e3
-      max_insert_size: 10000
+      # Max number of goroutines processing events.
+      # Default is GOMAXPROCS.
       #max_threads: 10
+
+      # Max number of events to insert in a single query.
+      #max_insert_size: 10000
+
+      # Max number of buffered events. If the buffer is full, events are dropped.
+      # Default scales linearly with max_threads.
+      #max_buffered_records: 100e3
 
     ##
     ## Metrics processing options.
     ##
     metrics:
-      max_buffered_records: 100e3
-      max_insert_size: 10000
-      cum_point_storage_size: 100000
+      # Max number of goroutines processing datapoints.
+      # Default is GOMAXPROCS.
+      #max_threads: 10
+
+      # Max number of datapoints to insert in a single query.
+      #max_insert_size: 10000
+
+      # Max number of buffered datapoints. If the buffer is full, datapoints are dropped.
+      # Default scales linearly with max_threads.
+      #max_buffered_records: 100e3
+
+      # Max number of cumulative timeseries to convert into delta timeseries.
+      # Default scales linearly with max_threads.
+      #max_cumulative_timeseries: 1e6
+
+    ##
+    ## Trace constructing limits.
+    ##
+    trace:
+      # Max number of spans, logs, and events to select.
+      #query_limit: 200_000
+
+      # Max number of bytes to select.
+      #max_memory_usage_bytes: 200_000_000
+
+    ###
+    ### Alerting options.
+    ###
+    alerting:
+      # Uncomment to disable monitors and notifications.
+      #disabled: true
 
     ###
     ### Service graph processing options.
@@ -500,7 +542,7 @@ uptrace:
     ##
     uptrace_go:
       # Uncomment to disable.
-      #disabled: false
+      #disabled: true
       dsn: http://project1_secret@uptrace:80?grpc=4317
 
     ##
