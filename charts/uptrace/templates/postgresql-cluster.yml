@@ -13,7 +13,7 @@ metadata:
     {{- end }}
 
 spec:
-  imageName: {{ .Values.postgresql.imageNname }}
+  imageName: {{ .Values.postgresql.imageName }}
   imagePullSecrets:
     {{- toYaml .Values.postgresql.imagePullSecrets | nindent 4 }}
 
