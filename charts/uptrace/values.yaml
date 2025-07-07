@@ -206,6 +206,13 @@ ingress:
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
+    #
+    # For example, to inject the `url` value from the `site` section, use:
+    #
+    # - host: '{{ .Values.uptrace.site.url }}'
+    #   paths:
+    #     - path: /
+    #       pathType: Prefix
     - host: uptrace.local
       paths:
         - path: /
@@ -282,6 +289,11 @@ uptrace:
     ##
     ##   foo: $$FOO_BAR
     ##
+    ## Can be used with the `tpl` function to inject values from the values.yaml file.
+    ## For example, to inject the `url` value from the `site` section, use:
+    ##
+    ##   site:
+    ##     url: '{{ .Values.uptrace.site.url }}'
 
     ##
     ## Service configuration options.

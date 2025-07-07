@@ -47,7 +47,7 @@ spec:
             - name: grpc
               containerPort: {{ .Values.uptrace.service.grpc_port }}
               protocol: TCP
-          {{ with .Values.uptrace.config.site.url | urlParse }}
+          {{ with (tpl .Values.uptrace.config.site.url $) | urlParse }}
           livenessProbe:
             httpGet:
               path: {{ .path }}
