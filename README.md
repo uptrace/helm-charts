@@ -13,7 +13,7 @@ See [**Deploying Uptrace on Kubernetes with Helm**](https://uptrace.dev/get/host
 
 ## TODO
 
-- Start using Redis Operator
+- Start using Redis Operator (need to find a working one first)
 - Change default configuration to run multiple replicas of everything for high availability
 
 ## Help
