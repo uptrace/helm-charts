@@ -7,7 +7,7 @@ uptrace:
       secret: 'FIXME'
 
     site:
-      url: 'http://uptrace.local'
+      url: http://uptrace.local
 
     ch_cluster:
       shards:
@@ -24,32 +24,56 @@ uptrace:
       database: ${PG_DATABASE:uptrace}
 
     seed_data:
+      # Default users created on first startup
       users:
-        - name: Admin
-          key: user1 # Unique user key for links below
-          email: admin@uptrace.local
-          password: admin
-          auth_tokens: ['user1_secret']
+        - key: user1                 # Internal reference key (used in relationships below)
+          name: Admin                # Display name in UI
+          email: admin@uptrace.local # Login email (must be unique)
+          password: admin            # Plain text password (CHANGE THIS IMMEDIATELY!)
+          email_confirmed: true
 
+      # API tokens for user authentication
+      # These tokens can be used for API access and programmatic operations
+      user_tokens:
+        - key: user_token1           # Internal reference key
+          user_key: user1            # References user.key above
+          token: user1_secret        # API token value (CHANGE THIS!)
+
+      # Organizations for multi-tenant deployments
+      # Organizations group users and projects together
       orgs:
-        - name: Org1
-          key: org1 # Unique org key for links below
+        - key: org1                  # Internal reference key
+          name: Org1                 # Organization display name
 
+      # Organization membership and roles
+      # Defines which users belong to which organizations
       org_users:
-        - org: org1 # Link to org key
-          user: user1 # Link to user key
-          role: owner
+        - key: org_user1             # Internal reference key
+          org_key: org1              # References org.key above
+          user_key: user1            # References user.key above
+          role: owner                # Role: owner, admin, or member
 
+      # Projects contain telemetry data and are isolated from each other
+      # Each project has its own spans, logs, metrics, and dashboards
       projects:
-        - name: Project1
-          key: project1 # Unique project key for links below
-          org: org1 # Link to org key
-          tokens: [project1_secret]
+        - key: project1              # Internal reference key
+          name: Project1             # Project display name
+          org_key: org1              # References org.key above
 
+      # Project-specific tokens for telemetry data ingestion
+      # These tokens are used in OTLP DSN strings for sending data
+      project_tokens:
+        - key: project_token1        # Internal reference key
+          project_key: project1      # References project.key above
+          token: project1_secret     # Token value for DSN (CHANGE THIS!)
+
+      # Project user permissions
+      # Controls who can access and modify project data
       project_users:
-        - project: project1 # Link to project key
-          user: user1 # Link to user key
-          perm_level: admin
+        - key: project_user1         # Internal reference key
+          project_key: project1      # References project.key above
+          org_user_key: org_user1    # References org_user.key above
+          perm_level: admin          # Permission level: admin, editor, or viewer
 
     mailer:
       smtp:
