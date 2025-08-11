@@ -369,6 +369,9 @@ uptrace:
     # Initial data created during first startup - defines default users, organizations, and projects
     # This data is only created once and can be modified through the UI afterward
     seed_data:
+      update: true # Whether to update existing resources by key
+      delete: true # Whether to delete disappeared resources by key
+
       # Default users created on first startup
       users:
         - key: user1                 # Internal reference key (used in relationships below)
@@ -553,7 +556,7 @@ uptrace:
 
         # TLS configuration
         # Most production SMTP servers require TLS
-        #tls: { disabled: true }     # Uncomment to disable opportunistic TLS
+        #tls: { insecure: true }     # Uncomment to disable opportunistic TLS
 
     # -----------------------------------------------------------------------------
     # Telemetry Data Processing Configuration
