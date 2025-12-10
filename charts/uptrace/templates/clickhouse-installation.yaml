@@ -47,13 +47,19 @@ spec:
         spec:
           accessModes:
             - ReadWriteOnce
+          {{- with .Values.clickhouse.persistence.storageClassName }}
+          storageClassName: {{ . | quote }}
+          {{- end }}
           resources:
             requests:
-              storage: 10Gi
+              storage: {{ .Values.clickhouse.persistence.size | quote }}
       - name: log-volume-template
         spec:
           accessModes:
             - ReadWriteOnce
+          {{- with .Values.clickhouse.persistence.storageClassName }}
+          storageClassName: {{ . | quote }}
+          {{- end }}
           resources:
             requests:
               storage: 1Gi
