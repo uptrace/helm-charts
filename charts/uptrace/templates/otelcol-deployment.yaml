@@ -26,6 +26,9 @@ spec:
           volumeMounts:
             - name: config
               mountPath: /etc/config
+            - name: varlogpods
+              mountPath: /var/log/pods
+              readOnly: true
           imagePullPolicy: IfNotPresent
           env:
             {{- toYaml .Values.uptrace.env | nindent 12 }}
@@ -33,4 +36,7 @@ spec:
         - name: config
           configMap:
             name: otelcol
+        - name: varlogpods
+          hostPath:
+            path: /var/log/pods
 {{ end }}
