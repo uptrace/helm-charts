@@ -83,7 +83,7 @@ kubectl logs my-uptrace-0 -n uptrace
 
 ## Upgrading
 
-To fetch information about latest charts from the Helm repositories:
+To fetch information about the latest charts from the Helm repositories:
 
 ```shell
 helm repo update
