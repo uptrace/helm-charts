@@ -39,6 +39,7 @@ spec:
             - /bin/sh
             - -c
             - |
+              set -euxo pipefail
               /uptrace --config=/etc/uptrace/config.yml pg wait
               /uptrace --config=/etc/uptrace/config.yml pg init
               /uptrace --config=/etc/uptrace/config.yml pg migrate

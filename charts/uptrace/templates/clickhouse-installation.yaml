@@ -28,9 +28,14 @@ spec:
     podTemplates:
       - name: pod-template
         spec:
+          {{- with .Values.clickhouse.imagePullSecrets }}
+          imagePullSecrets:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           containers:
             - name: clickhouse
-              image: clickhouse/clickhouse-server:25.3
+              image: "{{ .Values.clickhouse.image.repository }}:{{ .Values.clickhouse.image.tag }}"
+              imagePullPolicy: {{ .Values.clickhouse.image.pullPolicy }}
               env:
                 - name: CLICKHOUSE_ALWAYS_RUN_INITDB_SCRIPTS
                   value: 'true'
