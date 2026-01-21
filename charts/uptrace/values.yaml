@@ -198,6 +198,8 @@ otelcolDaemonset:
           processors: [k8sattributes, cumulativetodelta, batch]
           exporters: [debug, otlp/local]
 
+  tolerations: []
+
 ingress:
   enabled: true
   className: ''
