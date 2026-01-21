@@ -7,7 +7,7 @@ metadata:
     app: uptrace-migrate
     {{- include "uptrace.labels" . | nindent 4 }}
   annotations:
-    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook": post-install,post-upgrade
     "helm.sh/hook-weight": "5"
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
 spec:
@@ -39,8 +39,10 @@ spec:
             - /bin/sh
             - -c
             - |
+              /uptrace --config=/etc/uptrace/config.yml pg wait
               /uptrace --config=/etc/uptrace/config.yml pg init
               /uptrace --config=/etc/uptrace/config.yml pg migrate
+              /uptrace --config=/etc/uptrace/config.yml ch wait
               /uptrace --config=/etc/uptrace/config.yml ch check
               /uptrace --config=/etc/uptrace/config.yml ch init
               /uptrace --config=/etc/uptrace/config.yml ch migrate
