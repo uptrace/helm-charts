@@ -21,7 +21,12 @@ spec:
 
   storage:
     size: {{ .Values.postgresql.storage.size }}
+    {{- if not (empty .Values.postgresql.storage.pvcTemplate) }}
+    pvcTemplate:
+      {{- toYaml .Values.postgresql.storage.pvcTemplate | nindent 6 }}
+    {{- else }}
     {{- if .Values.postgresql.storage.storageClass }}
     storageClass: {{ .Values.postgresql.storage.storageClass }}
+    {{- end }}
     {{- end }}
 {{- end }}
