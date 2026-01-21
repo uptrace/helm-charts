@@ -9,13 +9,11 @@ fullnameOverride: ''
 podAnnotations: {}
 
 # Security context for pod templates.
-podSecurityContext:
-  {}
+podSecurityContext: {}
   # fsGroup: 2000
 
 # Security context for containers.
-containerSecurityContext:
-  {}
+containerSecurityContext: {}
   # capabilities:
   #   drop:
   #   - ALL
@@ -40,7 +38,7 @@ clickhouse:
   image:
     repository: clickhouse/clickhouse-server
     pullPolicy: IfNotPresent
-    tag: '25.3'
+    tag: '25.8'
 
   persistence:
     enabled: true
@@ -52,8 +50,7 @@ clickhouse:
     http_port: 8123
     tcp_port: 9000
 
-  resources:
-    {}
+  resources: {}
     # We usually recommend not to specify default resources and to leave this as a conscious
     # choice for the user. This also increases chances charts run on environments with little
     # resources, such as Minikube. If you do want to specify resources, uncomment the following
@@ -97,8 +94,7 @@ postgresql:
     #         storage: 4Gi
     #     volumeMode: Filesystem
 
-  resources:
-    {}
+  resources: {}
     # We usually recommend not to specify default resources and to leave this as a conscious
     # choice for the user. This also increases chances charts run on environments with little
     # resources, such as Minikube. If you do want to specify resources, uncomment the following
@@ -155,8 +151,7 @@ otelcol:
           processors: [batch]
           exporters: [debug, otlp/local]
 
-  resources:
-    {}
+  resources: {}
     # We usually recommend not to specify default resources and to leave this as a conscious
     # choice for the user. This also increases chances charts run on environments with little
     # resources, such as Minikube. If you do want to specify resources, uncomment the following
@@ -219,8 +214,7 @@ otelcolDaemonset:
 ingress:
   enabled: true
   className: ''
-  annotations:
-    {}
+  annotations: {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
@@ -242,6 +236,10 @@ ingress:
 
 uptrace:
   replicaCount: 1
+
+  migrate:
+    disabled: false
+
   imagePullSecrets: []
 
   image:
@@ -252,16 +250,14 @@ uptrace:
     type: ClusterIP # or LoadBalancer
     http_port: 80
     grpc_port: 4317
-    annotations:
-      {}
+    annotations: {}
       # service.beta.kubernetes.io/aws-load-balancer-type: "external"
       # service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: "ip"
     # Valid values: "Cluster" (default) or "Local"
     # Use "Local" to preserve client source IPs (required for loadBalancerSourceRanges to work)
-    externalTrafficPolicy: ""
-    loadBalancerIP: "" # optional static IP for LoadBalancer
-    loadBalancerSourceRanges:
-      []
+    externalTrafficPolicy: ''
+    loadBalancerIP: '' # optional static IP for LoadBalancer
+    loadBalancerSourceRanges: []
       # - "10.0.0.0/8"
       # - "20.0.0.0/8"
 
@@ -279,8 +275,7 @@ uptrace:
   ## https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/#define-an-environment-variable-for-a-container
   envFrom: []
 
-  resources:
-    {}
+  resources: {}
     # We usually recommend not to specify default resources and to leave this as a conscious
     # choice for the user. This also increases chances charts run on environments with little
     # resources, such as Minikube. If you do want to specify resources, uncomment the following
@@ -314,8 +309,8 @@ uptrace:
     # -----------------------------------------------------------------------------
     # Core service settings that define the runtime environment and security
     service:
-      env: hosted           # Environment: hosted, development, production
-      secret: FIXME         # Secret key for cryptographic operations (CHANGE THIS!)
+      env: hosted # Environment: hosted, development, production
+      secret: FIXME # Secret key for cryptographic operations (CHANGE THIS!)
 
     # -----------------------------------------------------------------------------
     # Site Configuration
@@ -396,54 +391,54 @@ uptrace:
 
       # Default users created on first startup
       users:
-        - key: user1                 # Internal reference key (used in relationships below)
-          name: Admin                # Display name in UI
+        - key: user1 # Internal reference key (used in relationships below)
+          name: Admin # Display name in UI
           email: admin@uptrace.local # Login email (must be unique)
-          password: admin            # Plain text password (CHANGE THIS IMMEDIATELY!)
+          password: admin # Plain text password (CHANGE THIS IMMEDIATELY!)
           email_confirmed: true
 
       # API tokens for user authentication
       # These tokens can be used for API access and programmatic operations
       user_tokens:
-        - key: user_token1           # Internal reference key
-          user_key: user1            # References user.key above
-          token: user1_secret        # API token value (CHANGE THIS!)
+        - key: user_token1 # Internal reference key
+          user_key: user1 # References user.key above
+          token: user1_secret # API token value (CHANGE THIS!)
 
       # Organizations for multi-tenant deployments
       # Organizations group users and projects together
       orgs:
-        - key: org1                  # Internal reference key
-          name: Org1                 # Organization display name
+        - key: org1 # Internal reference key
+          name: Org1 # Organization display name
 
       # Organization membership and roles
       # Defines which users belong to which organizations
       org_users:
-        - key: org_user1             # Internal reference key
-          org_key: org1              # References org.key above
-          user_key: user1            # References user.key above
-          role: owner                # Role: owner, admin, or member
+        - key: org_user1 # Internal reference key
+          org_key: org1 # References org.key above
+          user_key: user1 # References user.key above
+          role: owner # Role: owner, admin, or member
 
       # Projects contain telemetry data and are isolated from each other
       # Each project has its own spans, logs, metrics, and dashboards
       projects:
-        - key: project1              # Internal reference key
-          name: Project1             # Project display name
-          org_key: org1              # References org.key above
+        - key: project1 # Internal reference key
+          name: Project1 # Project display name
+          org_key: org1 # References org.key above
 
       # Project-specific tokens for telemetry data ingestion
       # These tokens are used in OTLP DSN strings for sending data
       project_tokens:
-        - key: project_token1        # Internal reference key
-          project_key: project1      # References project.key above
-          token: project1_secret     # Token value for DSN (CHANGE THIS!)
+        - key: project_token1 # Internal reference key
+          project_key: project1 # References project.key above
+          token: project1_secret # Token value for DSN (CHANGE THIS!)
 
       # Project user permissions
       # Controls who can access and modify project data
       project_users:
-        - key: project_user1         # Internal reference key
-          project_key: project1      # References project.key above
-          org_user_key: org_user1    # References org_user.key above
-          perm_level: admin          # Permission level: admin, editor, or viewer
+        - key: project_user1 # Internal reference key
+          project_key: project1 # References project.key above
+          org_user_key: org_user1 # References org_user.key above
+          perm_level: admin # Permission level: admin, editor, or viewer
 
     # -----------------------------------------------------------------------------
     # ClickHouse Database Configuration
@@ -469,15 +464,15 @@ uptrace:
       # Each shard can have multiple replicas for redundancy
       shards:
         - replicas:
-            - addr: ${CH_ADDR:clickhouse-uptrace1:9000}  # ClickHouse server address
-              database: ${CH_DATABASE:uptrace}           # Database name (must exist)
-              user: ${CH_USER:uptrace}                   # Database user with write permissions
-              password: ${CH_PASSWORD:uptrace}           # Database password
+            - addr: ${CH_ADDR:clickhouse-uptrace1:9000} # ClickHouse server address
+              database: ${CH_DATABASE:uptrace} # Database name (must exist)
+              user: ${CH_USER:uptrace} # Database user with write permissions
+              password: ${CH_PASSWORD:uptrace} # Database password
 
               # Connection timeout settings
-              dial_timeout: 3s                 # Time to wait for connection establishment
-              write_timeout: 5s                # Time to wait for write operations
-              max_retries: 3                   # Number of retry attempts for failed operations
+              dial_timeout: 3s # Time to wait for connection establishment
+              write_timeout: 5s # Time to wait for write operations
+              max_retries: 3 # Number of retry attempts for failed operations
 
               # Query execution timeout
               # Prevents long-running queries from consuming resources
@@ -486,10 +481,10 @@ uptrace:
               # TLS configuration for secure database connections
               # Uncomment for production deployments with SSL/TLS
               #tls:
-                #cert_file: /etc/clickhouse-server/ssl/client.crt
-                #key_file: /etc/clickhouse-server/ssl/client.key
-                #ca_file: /etc/clickhouse-server/ssl/ca.crt
-                #insecure_skip_verify: true  # WARNING: Only use for self-signed certificates
+              #cert_file: /etc/clickhouse-server/ssl/client.crt
+              #key_file: /etc/clickhouse-server/ssl/client.key
+              #ca_file: /etc/clickhouse-server/ssl/ca.crt
+              #insecure_skip_verify: true  # WARNING: Only use for self-signed certificates
 
     # -----------------------------------------------------------------------------
     # PostgreSQL Database Configuration
@@ -497,10 +492,10 @@ uptrace:
     # Metadata storage for application data (users, projects, dashboards, alerts, etc.)
     # PostgreSQL provides ACID compliance for critical application state
     pg:
-      addr: ${PG_ADDR:uptrace-postgresql-rw:5432}    # PostgreSQL server address
-      user: ${PG_USER:uptrace}                       # Database user with full permissions
-      password: ${PG_PASSWORD:uptrace}               # Database password
-      database: ${PG_DATABASE:uptrace}               # Database name (must exist)
+      addr: ${PG_ADDR:uptrace-postgresql-rw:5432} # PostgreSQL server address
+      user: ${PG_USER:uptrace} # Database user with full permissions
+      password: ${PG_PASSWORD:uptrace} # Database password
+      database: ${PG_DATABASE:uptrace} # Database name (must exist)
 
       # TLS configuration for secure database connections
       # Recommended for production deployments
@@ -522,14 +517,14 @@ uptrace:
 
       # Storage policies for different data types
       # Allows using different storage tiers (SSD, HDD, S3) for different data
-      spans_index: { storage_policy: default }   # Span search indexes
-      spans_data: { storage_policy: default }    # Raw span data
-      span_links: { storage_policy: default }    # Span relationship data
-      logs_index: { storage_policy: default }    # Log search indexes
-      logs_data: { storage_policy: default }     # Raw log data
-      events_index: { storage_policy: default }  # Event search indexes
-      events_data: { storage_policy: default }   # Raw event data
-      metrics: { storage_policy: default }       # Metrics time-series data
+      spans_index: { storage_policy: default } # Span search indexes
+      spans_data: { storage_policy: default } # Raw span data
+      span_links: { storage_policy: default } # Span relationship data
+      logs_index: { storage_policy: default } # Log search indexes
+      logs_data: { storage_policy: default } # Raw log data
+      events_index: { storage_policy: default } # Event search indexes
+      events_data: { storage_policy: default } # Raw event data
+      metrics: { storage_policy: default } # Metrics time-series data
 
     # -----------------------------------------------------------------------------
     # Redis Cache Configuration
@@ -543,9 +538,9 @@ uptrace:
         1: ${REDIS_ADDR:redis-master:6379}
 
       # Redis authentication credentials
-      username: ''               # Redis username (Redis 6.0+)
-      password: ''               # Redis password
-      db: 0                      # Redis database number (0-15)
+      username: '' # Redis username (Redis 6.0+)
+      password: '' # Redis password
+      db: 0 # Redis database number (0-15)
 
       # TLS configuration for secure Redis connections
       # Recommended for production deployments
@@ -557,9 +552,9 @@ uptrace:
     # -----------------------------------------------------------------------------
     # Automatic certificate issuance and renewal via Let's Encrypt ACME protocol
     certmagic:
-      enabled: false              # Enable automatic certificate management
-      staging_ca: false           # Use Let's Encrypt staging environment for testing
-      http_challenge_addr: :80    # Address for HTTP-01 challenge validation
+      enabled: false # Enable automatic certificate management
+      staging_ca: false # Use Let's Encrypt staging environment for testing
+      http_challenge_addr: :80 # Address for HTTP-01 challenge validation
 
     # -----------------------------------------------------------------------------
     # Email Configuration
@@ -569,12 +564,12 @@ uptrace:
     # Documentation: https://uptrace.dev/features/alerting
     mailer:
       smtp:
-        enabled: false                # Enable email notifications
-        host: localhost               # SMTP server hostname
-        port: 1025                    # SMTP server port (25, 465, 587, 1025)
-        username: mailhog             # SMTP authentication username
-        password: mailhog             # SMTP authentication password
-        from: no-reply@uptrace.local  # Sender email address (must be authorized)
+        enabled: false # Enable email notifications
+        host: localhost # SMTP server hostname
+        port: 1025 # SMTP server port (25, 465, 587, 1025)
+        username: mailhog # SMTP authentication username
+        password: mailhog # SMTP authentication password
+        from: no-reply@uptrace.local # Sender email address (must be authorized)
 
         # TLS configuration
         # Most production SMTP servers require TLS

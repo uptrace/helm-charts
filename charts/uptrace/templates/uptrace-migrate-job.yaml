@@ -1,26 +1,24 @@
-apiVersion: apps/v1
-kind: StatefulSet
+{{- if not .Values.uptrace.migrate.disabled }}
+apiVersion: batch/v1
+kind: Job
 metadata:
-  name: {{ include "uptrace.fullname" . }}
+  name: {{ include "uptrace.fullname" . }}-migrate
   labels:
-    app: uptrace
+    app: uptrace-migrate
     {{- include "uptrace.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "5"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
 spec:
-  replicas: {{ .Values.uptrace.replicaCount }}
-  serviceName: {{ include "uptrace.fullname" . }}
-  selector:
-    matchLabels:
-      app: uptrace
-      {{- include "uptrace.selectorLabels" . | nindent 6 }}
   template:
     metadata:
+      {{- with .Values.podAnnotations }}
       annotations:
-        checksum/config: {{ .Values.uptrace.config | toYaml | sha256sum }}
-        {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
-        {{- end }}
+      {{- end }}
       labels:
-        app: uptrace
+        app: uptrace-migrate
         {{- include "uptrace.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.uptrace.imagePullSecrets }}
@@ -30,36 +28,31 @@ spec:
       serviceAccountName: {{ include "uptrace.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      restartPolicy: OnFailure
       containers:
-        - name: {{ .Chart.Name }}
+        - name: migrate
           securityContext:
             {{- toYaml .Values.containerSecurityContext | nindent 12 }}
           image: "{{ .Values.uptrace.image.repository }}:{{ .Values.uptrace.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.uptrace.image.pullPolicy }}
-          args: ["serve"]
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -euxo pipefail
+              /uptrace --config=/etc/uptrace/config.yml pg wait
+              /uptrace --config=/etc/uptrace/config.yml pg init
+              /uptrace --config=/etc/uptrace/config.yml pg migrate
+              /uptrace --config=/etc/uptrace/config.yml ch wait
+              /uptrace --config=/etc/uptrace/config.yml ch check
+              /uptrace --config=/etc/uptrace/config.yml ch init
+              /uptrace --config=/etc/uptrace/config.yml ch migrate
+              /uptrace --config=/etc/uptrace/config.yml ch dist
+              /uptrace --config=/etc/uptrace/config.yml db seed
           volumeMounts:
             - name: config
               mountPath: /etc/uptrace/config.yml
               subPath: uptrace.yml
-          ports:
-            - name: http
-              containerPort: {{ .Values.uptrace.config.listen.http.addr | splitList ":" | last }}
-              protocol: TCP
-            - name: grpc
-              containerPort: {{ .Values.uptrace.config.listen.grpc.addr | splitList ":" | last }}
-              protocol: TCP
-          {{ with (tpl .Values.uptrace.config.site.url $) | urlParse }}
-          livenessProbe:
-            httpGet:
-              path: {{ .path }}
-              port: http
-              scheme: {{ if $.Values.uptrace.config.listen.tls }}HTTPS{{ else }}HTTP{{ end }}
-          readinessProbe:
-            httpGet:
-              path: {{ .path }}
-              port: http
-              scheme: {{ if $.Values.uptrace.config.listen.tls }}HTTPS{{ else }}HTTP{{ end }}
-          {{ end }}
           env:
           {{- if .Values.postgresql.enabled }}
             - name: PG_HOST
@@ -104,3 +97,4 @@ spec:
         - name: config
           configMap:
             name: {{ include "uptrace.fullname" . }}
+{{- end }}

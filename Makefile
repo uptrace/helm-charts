@@ -22,6 +22,7 @@ install:
 
 uninstall:
 	helm uninstall -n $(NAMESPACE) $(RELEASE_NAME)
+	kubectl delete job -n $(NAMESPACE) uptrace-migrate
 
 logs:
 	kubectl logs $(RELEASE_NAME)-0 -n $(NAMESPACE)
