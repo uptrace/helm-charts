@@ -10,6 +10,10 @@ spec:
   mode: daemonset
   hostNetwork: true
   serviceAccount: otelcol
+  {{- with .Values.otelcolDaemonset.tolerations }}
+  tolerations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
   config:
     {{- .Values.otelcolDaemonset.config | toYaml | nindent 4 }}
 {{ end }}
