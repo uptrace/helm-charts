@@ -42,10 +42,10 @@ spec:
               subPath: uptrace.yml
           ports:
             - name: http
-              containerPort: {{ .Values.uptrace.service.http_port }}
+              containerPort: {{ .Values.uptrace.config.listen.http.addr | splitList ":" | last }}
               protocol: TCP
             - name: grpc
-              containerPort: {{ .Values.uptrace.service.grpc_port }}
+              containerPort: {{ .Values.uptrace.config.listen.grpc.addr | splitList ":" | last }}
               protocol: TCP
           {{ with (tpl .Values.uptrace.config.site.url $) | urlParse }}
           livenessProbe:
