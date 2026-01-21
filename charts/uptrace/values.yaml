@@ -80,6 +80,22 @@ postgresql:
   storage:
     size: 4Gi
     storageClass: ''
+    pvcTemplate: {}
+    # When pvcTemplate is set, it takes precedence for PVC-specific fields such
+    # as storage size and storage class, but size is still required by the
+    # CloudNativePG Cluster spec and must remain set here.
+    # pvcTemplate:
+    #   metadata:
+    #     labels:
+    #       app: uptrace-postgresql
+    #   spec:
+    #     accessModes:
+    #       - ReadWriteOnce
+    #     storageClassName: standard
+    #     resources:
+    #       requests:
+    #         storage: 4Gi
+    #     volumeMode: Filesystem
 
   resources:
     {}
