@@ -13,6 +13,9 @@ metadata:
   {{- end }}
 spec:
   type: {{ .Values.uptrace.service.type }}
+  {{- if or (eq .Values.uptrace.service.type "LoadBalancer") (eq .Values.uptrace.service.type "NodePort") }}
+  externalTrafficPolicy: {{ .Values.uptrace.service.externalTrafficPolicy }}
+  {{- end }}
   ports:
     - port: {{ .Values.uptrace.service.http_port }}
       targetPort: http
