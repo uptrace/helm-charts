@@ -13,8 +13,11 @@ metadata:
   {{- end }}
 spec:
   type: {{ .Values.uptrace.service.type }}
-  {{- if or (eq .Values.uptrace.service.type "LoadBalancer") (eq .Values.uptrace.service.type "NodePort") }}
+  {{- if and (or (eq .Values.uptrace.service.type "LoadBalancer") (eq .Values.uptrace.service.type "NodePort")) .Values.uptrace.service.externalTrafficPolicy }}
   externalTrafficPolicy: {{ .Values.uptrace.service.externalTrafficPolicy }}
+  {{- end }}
+  {{- if and (eq .Values.uptrace.service.type "LoadBalancer") .Values.uptrace.service.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.uptrace.service.loadBalancerIP }}
   {{- end }}
   ports:
     - port: {{ .Values.uptrace.service.http_port }}

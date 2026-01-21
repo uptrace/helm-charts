@@ -240,7 +240,10 @@ uptrace:
       {}
       # service.beta.kubernetes.io/aws-load-balancer-type: "external"
       # service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: "ip"
-    externalTrafficPolicy: Cluster # set to Local to preserve client IPs
+    # Valid values: "Cluster" (default) or "Local"
+    # Use "Local" to preserve client source IPs (required for loadBalancerSourceRanges to work)
+    externalTrafficPolicy: ""
+    loadBalancerIP: "" # optional static IP for LoadBalancer
     loadBalancerSourceRanges:
       []
       # - "10.0.0.0/8"
