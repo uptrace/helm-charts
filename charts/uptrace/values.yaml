@@ -242,6 +242,10 @@ ingress:
 
 uptrace:
   replicaCount: 1
+
+  migrate:
+    disabled: false
+
   imagePullSecrets: []
 
   image:
