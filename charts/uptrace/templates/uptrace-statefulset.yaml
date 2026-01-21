@@ -52,10 +52,12 @@ spec:
             httpGet:
               path: {{ .path }}
               port: http
+              scheme: {{ if $.Values.uptrace.config.listen.tls }}HTTPS{{ else }}HTTP{{ end }}
           readinessProbe:
             httpGet:
               path: {{ .path }}
               port: http
+              scheme: {{ if $.Values.uptrace.config.listen.tls }}HTTPS{{ else }}HTTP{{ end }}
           {{ end }}
           env:
           {{- if .Values.postgresql.enabled }}
