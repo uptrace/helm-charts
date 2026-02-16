@@ -44,10 +44,8 @@ spec:
               /uptrace --config=/etc/uptrace/config.yml pg init
               /uptrace --config=/etc/uptrace/config.yml pg migrate
               /uptrace --config=/etc/uptrace/config.yml ch wait
-              /uptrace --config=/etc/uptrace/config.yml ch check
               /uptrace --config=/etc/uptrace/config.yml ch init
               /uptrace --config=/etc/uptrace/config.yml ch migrate
-              /uptrace --config=/etc/uptrace/config.yml ch dist
               /uptrace --config=/etc/uptrace/config.yml db seed
           volumeMounts:
             - name: config
