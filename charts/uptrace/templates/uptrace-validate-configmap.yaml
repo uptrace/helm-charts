@@ -1,0 +1,15 @@
+{{- if not .Values.uptrace.configValidate.disabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "uptrace.fullname" . }}-validate
+  labels:
+    {{- include "uptrace.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-upgrade
+    "helm.sh/hook-weight": "0"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+data:
+  uptrace.yml: |
+{{ tpl (toYaml .Values.uptrace.config) $ | indent 4 }}
+{{- end }}

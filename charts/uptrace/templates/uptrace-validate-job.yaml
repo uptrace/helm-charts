@@ -1,0 +1,91 @@
+{{- if not .Values.uptrace.configValidate.disabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "uptrace.fullname" . }}-validate
+  labels:
+    app: uptrace-validate
+    {{- include "uptrace.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-upgrade
+    "helm.sh/hook-weight": "1"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app: uptrace-validate
+        {{- include "uptrace.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.uptrace.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "uptrace.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      restartPolicy: Never
+      containers:
+        - name: validate
+          securityContext:
+            {{- toYaml .Values.containerSecurityContext | nindent 12 }}
+          image: "{{ .Values.uptrace.image.repository }}:{{ .Values.uptrace.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.uptrace.image.pullPolicy }}
+          command:
+            - /uptrace
+            - --config=/etc/uptrace/config.yml
+            - config
+            - validate
+          volumeMounts:
+            - name: config
+              mountPath: /etc/uptrace/config.yml
+              subPath: uptrace.yml
+          env:
+          {{- if .Values.postgresql.enabled }}
+            - name: PG_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: uptrace-postgresql-app
+                  key: host
+            - name: PG_USER
+              valueFrom:
+                secretKeyRef:
+                  name: uptrace-postgresql-app
+                  key: username
+            - name: PG_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: uptrace-postgresql-app
+                  key: password
+            - name: PG_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: uptrace-postgresql-app
+                  key: dbname
+            {{- end }}
+            {{- toYaml .Values.uptrace.env | nindent 12 }}
+          envFrom:
+            {{- toYaml .Values.uptrace.envFrom | nindent 12 }}
+          resources:
+            {{- toYaml .Values.uptrace.resources | nindent 12 }}
+      {{- with .Values.uptrace.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.uptrace.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.uptrace.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+        - name: config
+          configMap:
+            name: {{ include "uptrace.fullname" . }}-validate
+{{- end }}
