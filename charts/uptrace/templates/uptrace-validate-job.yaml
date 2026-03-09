@@ -1,14 +1,14 @@
-{{- if not .Values.uptrace.migrate.disabled }}
+{{- if not .Values.uptrace.configValidate.disabled }}
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "uptrace.fullname" . }}-migrate
+  name: {{ include "uptrace.fullname" . }}-validate
   labels:
-    app: uptrace-migrate
+    app: uptrace-validate
     {{- include "uptrace.labels" . | nindent 4 }}
   annotations:
-    "helm.sh/hook": post-install,post-upgrade
-    "helm.sh/hook-weight": "5"
+    "helm.sh/hook": pre-upgrade
+    "helm.sh/hook-weight": "1"
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
 spec:
   template:
@@ -18,7 +18,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        app: uptrace-migrate
+        app: uptrace-validate
         {{- include "uptrace.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.uptrace.imagePullSecrets }}
@@ -28,25 +28,18 @@ spec:
       serviceAccountName: {{ include "uptrace.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
-      restartPolicy: OnFailure
+      restartPolicy: Never
       containers:
-        - name: migrate
+        - name: validate
           securityContext:
             {{- toYaml .Values.containerSecurityContext | nindent 12 }}
           image: "{{ .Values.uptrace.image.repository }}:{{ .Values.uptrace.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.uptrace.image.pullPolicy }}
           command:
-            - /bin/sh
-            - -c
-            - |
-              set -euxo pipefail
-              /uptrace --config=/etc/uptrace/config.yml pg wait
-              /uptrace --config=/etc/uptrace/config.yml pg init
-              /uptrace --config=/etc/uptrace/config.yml pg migrate
-              /uptrace --config=/etc/uptrace/config.yml ch wait
-              /uptrace --config=/etc/uptrace/config.yml ch init
-              /uptrace --config=/etc/uptrace/config.yml ch migrate
-              /uptrace --config=/etc/uptrace/config.yml db seed
+            - /uptrace
+            - --config=/etc/uptrace/config.yml
+            - config
+            - validate
           volumeMounts:
             - name: config
               mountPath: /etc/uptrace/config.yml
@@ -94,5 +87,5 @@ spec:
       volumes:
         - name: config
           configMap:
-            name: {{ include "uptrace.fullname" . }}
+            name: {{ include "uptrace.fullname" . }}-validate
 {{- end }}
