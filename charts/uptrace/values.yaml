@@ -110,6 +110,39 @@ postgresql:
   tolerations: []
   affinity: {}
 
+redis:
+  enabled: false
+
+  imagePullSecrets: []
+  image:
+    repository: redis
+    pullPolicy: IfNotPresent
+    tag: '7-alpine'
+
+  # Redis password. Leave empty to disable authentication.
+  password: ''
+
+  persistence:
+    enabled: true
+    storageClassName: '' # leave empty to use the default storage class
+    size: 2Gi
+
+  service:
+    type: ClusterIP
+    port: 6379
+
+  resources: {}
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
 # Optional OpenTelemetry Collector deployment.
 otelcol:
   enabled: true
@@ -538,11 +571,11 @@ uptrace:
       # Redis server addresses
       # For cluster setup, add multiple addresses
       addrs:
-        1: ${REDIS_ADDR:redis-master:6379}
+        1: '{{ printf "${REDIS_ADDR:%s-redis:%v}" (include "uptrace.fullname" $) (int .Values.redis.service.port) }}'
 
       # Redis authentication credentials
       username: '' # Redis username (Redis 6.0+)
-      password: '' # Redis password
+      password: '{{ .Values.redis.password }}' # Redis password
       db: 0 # Redis database number (0-15)
 
       # TLS configuration for secure Redis connections

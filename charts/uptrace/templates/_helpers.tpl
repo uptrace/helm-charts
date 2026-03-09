@@ -7,18 +7,20 @@ Expand the name of the chart.
 
 {{/*
 Create a default fully qualified app name.
-We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
-If release name contains chart name it will be used as a full name.
+We truncate at 48 chars (not 63) to leave room for resource-name suffixes
+like "-redis", "-migrate", "-validate", and StatefulSet pod ordinals
+(e.g. "-redis-0"), which Kubernetes appends and still must fit within the
+63-char DNS label limit.
 */}}
 {{- define "uptrace.fullname" -}}
 {{- if .Values.fullnameOverride }}
-{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
+{{- .Values.fullnameOverride | trunc 48 | trimSuffix "-" }}
 {{- else }}
 {{- $name := default .Chart.Name .Values.nameOverride }}
 {{- if contains $name .Release.Name }}
-{{- .Release.Name | trunc 63 | trimSuffix "-" }}
+{{- .Release.Name | trunc 48 | trimSuffix "-" }}
 {{- else }}
-{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}
+{{- printf "%s-%s" .Release.Name $name | trunc 48 | trimSuffix "-" }}
 {{- end }}
 {{- end }}
 {{- end }}
