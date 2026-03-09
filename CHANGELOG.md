@@ -1,5 +1,13 @@
 # Changelog
 
+## [v2.1.0-beta.2] - 2026-03-09
+
+### Features
+
+- **Redis server** - Added opt-in Redis server to the chart
+- **Config validation** - Validate config before upgrade
+  ([#67](https://github.com/uptrace/helm-charts/pull/67))
+
 ## [v2.1.0-beta] - 2026-01-21
 
 ### Features
