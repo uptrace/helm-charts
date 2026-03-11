@@ -1,5 +1,11 @@
 # Changelog
 
+## [v2.1.0-beta.3] - 2026-03-11
+
+### Features
+
+- **Redis enabled by default** - Enable built-in Redis by default and use `alpha` as redis addr key
+
 ## [v2.1.0-beta.2] - 2026-03-09
 
 ### Features
