@@ -38,7 +38,7 @@ clickhouse:
   image:
     repository: clickhouse/clickhouse-server
     pullPolicy: IfNotPresent
-    tag: '25.8'
+    tag: '26.3'
 
   persistence:
     enabled: true
@@ -206,7 +206,7 @@ otelcolDaemonset:
   config:
     receivers:
       hostmetrics:
-        collection_interval: 15s
+        collection_interval: 30s
         scrapers:
           cpu: {}
           disk: {}
@@ -216,7 +216,7 @@ otelcolDaemonset:
           network: {}
           paging: {}
       kubeletstats:
-        collection_interval: 15s
+        collection_interval: 30s
         auth_type: 'serviceAccount'
         endpoint: 'https://${env:K8S_NODE_NAME}:10250'
         insecure_skip_verify: true
