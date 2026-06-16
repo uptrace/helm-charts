@@ -44,6 +44,7 @@ clickhouse:
     enabled: true
     storageClassName: '' # leave empty to use the default storage class
     size: 8Gi
+    logSize: 1Gi
 
   service:
     type: ClusterIP
