@@ -71,5 +71,5 @@ spec:
           {{- end }}
           resources:
             requests:
-              storage: 1Gi
+              storage: {{ .Values.clickhouse.persistence.logSize | quote }}
 {{- end }}
