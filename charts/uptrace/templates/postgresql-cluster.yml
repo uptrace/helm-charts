@@ -19,6 +19,11 @@ spec:
 
   instances: {{ .Values.postgresql.instances }}
 
+  {{- with .Values.postgresql.resources }}
+  resources:
+    {{- toYaml . | nindent 4 }}
+  {{- end}}
+
   storage:
     size: {{ .Values.postgresql.storage.size }}
     {{- if not (empty .Values.postgresql.storage.pvcTemplate) }}
