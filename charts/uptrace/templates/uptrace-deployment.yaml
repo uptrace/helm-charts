@@ -1,6 +1,6 @@
-{{- if eq .Values.uptrace.mode "statefulset" -}}
+{{- if eq .Values.uptrace.mode "deployment" -}}
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: {{ include "uptrace.fullname" . }}
   labels:
@@ -8,7 +8,6 @@ metadata:
     {{- include "uptrace.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.uptrace.replicaCount }}
-  serviceName: {{ include "uptrace.fullname" . }}
   selector:
     matchLabels:
       app: uptrace
@@ -24,5 +23,5 @@ spec:
         app: uptrace
         {{- include "uptrace.selectorLabels" . | nindent 8 }}
     spec:
-       {{- include "uptrace.pod" . | nindent 6 }}
+      {{- include "uptrace.pod" . | nindent 6 }}
 {{- end }}
