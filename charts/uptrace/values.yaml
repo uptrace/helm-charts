@@ -269,6 +269,7 @@ ingress:
   #      - chart-example.local
 
 uptrace:
+  mode: "statefulset" # statefulset or deployment
   replicaCount: 1
 
   migrate:
