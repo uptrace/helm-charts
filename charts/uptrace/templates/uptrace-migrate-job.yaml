@@ -41,11 +41,8 @@ spec:
             - |
               set -euxo pipefail
               /uptrace --config=/etc/uptrace/config.yml pg wait
-              /uptrace --config=/etc/uptrace/config.yml pg init
-              /uptrace --config=/etc/uptrace/config.yml pg migrate
               /uptrace --config=/etc/uptrace/config.yml ch wait
-              /uptrace --config=/etc/uptrace/config.yml ch init
-              /uptrace --config=/etc/uptrace/config.yml ch migrate
+              /uptrace --config=/etc/uptrace/config.yml migrate up --wait 10m
               /uptrace --config=/etc/uptrace/config.yml db seed
           volumeMounts:
             - name: config
