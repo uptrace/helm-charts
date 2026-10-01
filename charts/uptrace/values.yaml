@@ -542,7 +542,7 @@ uptrace:
     # ClickHouse Schema Configuration
     # -----------------------------------------------------------------------------
     # Advanced schema settings for performance optimization
-    # WARNING: Changes require 'ch reset' command and will delete all data
+    # WARNING: Changes require 'migrate reset --database ch' and 'migrate up', and delete all data
     ch_schema:
       # Data compression algorithm for storage efficiency
       # Options:
