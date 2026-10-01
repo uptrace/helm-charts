@@ -18,11 +18,11 @@ lint:
 	helm lint --strict --set "cloud=local" ./charts/uptrace
 
 install:
-	helm install $(RELEASE_NAME) ./charts/uptrace -n $(NAMESPACE) --create-namespace
+	helm install $(RELEASE_NAME) ./charts/uptrace -n $(NAMESPACE) --create-namespace --wait
 
 uninstall:
 	helm uninstall -n $(NAMESPACE) $(RELEASE_NAME)
-	kubectl delete job -n $(NAMESPACE) uptrace-migrate
+	kubectl delete job -n $(NAMESPACE) uptrace-migrate uptrace-migrate-expand --ignore-not-found
 
 logs:
 	kubectl logs $(RELEASE_NAME)-0 -n $(NAMESPACE)
@@ -31,7 +31,7 @@ delete: uninstall
 	kubectl delete all,pvc,cm --all -n $(NAMESPACE)
 
 upgrade:
-	helm upgrade $(RELEASE_NAME) ./charts/uptrace -n $(NAMESPACE) --create-namespace
+	helm upgrade $(RELEASE_NAME) ./charts/uptrace -n $(NAMESPACE) --create-namespace --wait
 
 list:
 	kubectl get all -n $(NAMESPACE)
