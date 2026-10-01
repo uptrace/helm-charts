@@ -561,7 +561,8 @@ uptrace:
       logs_data: { storage_policy: default } # Raw log data
       events_index: { storage_policy: default } # Event search indexes
       events_data: { storage_policy: default } # Raw event data
-      metrics: { storage_policy: default } # Metrics time-series data
+      timeseries: { storage_policy: default } # Metric time series
+      datapoints: { storage_policy: default } # Metric data points
 
     # -----------------------------------------------------------------------------
     # Redis Cache Configuration
@@ -619,59 +620,58 @@ uptrace:
     # -----------------------------------------------------------------------------
     # Performance tuning for different types of telemetry data ingestion
 
-    # Spans (distributed tracing data)
-    # Contains trace information showing request flow across services
-    spans:
-      # Number of parallel processing threads
-      # Default: GOMAXPROCS (number of CPU cores)
-      # Increase for high-volume tracing workloads
-      #max_threads: 10
+    pipelines:
+      # Spans (distributed tracing data)
+      # Contains trace information showing request flow across services
+      spans:
+        # Number of parallel processing threads
+        # Default: GOMAXPROCS (number of CPU cores)
+        # Increase for high-volume tracing workloads
+        #max_threads: 10
 
-      # Batch size for database insertions
-      # Larger batches improve throughput but increase memory usage
-      # Tune based on your ingestion rate and memory constraints
-      #ch_max_insert_size: 10000
+        # Batch size for database insertions
+        # Larger batches improve throughput but increase memory usage
+        # Tune based on your ingestion rate and memory constraints
+        #ch_max_insert_size: 10000
 
-      # In-memory buffer capacity for incoming spans
-      # Spans are dropped when buffer is full (check metrics for drops)
-      # Default scales with max_threads
-      #max_buffered_records: 100e3
+      # Span links (relationships between spans)
+      # Used for connecting spans across trace boundaries
+      span_links:
+        # Uncomment to disable span link processing
+        # This saves resources if you don't use span links
+        #disabled: true
 
-    # Span links (relationships between spans)
-    # Used for connecting spans across trace boundaries
-    span_links:
-      # Uncomment to disable span link processing
-      # This saves resources if you don't use span links
-      #disabled: true
+        #max_threads: 10              # Processing parallelism
+        #ch_max_insert_size: 10000       # Batch size for insertions
 
-      #max_threads: 10              # Processing parallelism
-      #ch_max_insert_size: 10000       # Batch size for insertions
-      #max_buffered_records: 100e3  # Buffer capacity
+      # Application logs
+      # Structured and unstructured log data from applications
+      logs:
+        #max_threads: 10              # Processing parallelism
+        #ch_max_insert_size: 10000       # Batch size for insertions
 
-    # Application logs
-    # Structured and unstructured log data from applications
-    logs:
-      #max_threads: 10              # Processing parallelism
-      #ch_max_insert_size: 10000       # Batch size for insertions
-      #max_buffered_records: 100e3  # Buffer capacity
+      # Custom events
+      # Application-specific events and business metrics
+      events:
+        #max_threads: 10              # Processing parallelism
+        #ch_max_insert_size: 10000       # Batch size for insertions
 
-    # Custom events
-    # Application-specific events and business metrics
-    events:
-      #max_threads: 10              # Processing parallelism
-      #ch_max_insert_size: 10000       # Batch size for insertions
-      #max_buffered_records: 100e3  # Buffer capacity
+      # Metrics and time series data
+      # Numerical measurements over time (counters, gauges, histograms)
+      metrics:
+        #max_threads: 10              # Processing parallelism
+        #ch_max_insert_size: 10000       # Batch size for insertions
 
-    # Metrics and time series data
-    # Numerical measurements over time (counters, gauges, histograms)
-    metrics:
-      #max_threads: 10              # Processing parallelism
-      #ch_max_insert_size: 10000       # Batch size for insertions
-      #max_buffered_records: 100e3  # Buffer capacity
+        # Memory limit for cumulative to delta conversion
+        # Affects processing of cumulative counters from OpenTelemetry
+        #max_cumulative_timeseries: 1e6
 
-      # Memory limit for cumulative to delta conversion
-      # Affects processing of cumulative counters from OpenTelemetry
-      #max_cumulative_timeseries: 1e6
+      # Service dependency graph generation
+      # Automatically builds service topology from trace data
+      service_graph:
+        # Uncomment to disable service graph processing
+        # This saves CPU and memory if you don't use the service map
+        #disabled: true
 
     # -----------------------------------------------------------------------------
     # Query & Performance Limits
@@ -700,13 +700,6 @@ uptrace:
     alerting:
       # Uncomment to disable the entire alerting system
       # This saves resources if you don't use monitoring alerts
-      #disabled: true
-
-    # Service dependency graph generation
-    # Automatically builds service topology from trace data
-    service_graph:
-      # Uncomment to disable service graph processing
-      # This saves CPU and memory if you don't use the service map
       #disabled: true
 
     # JavaScript error sourcemap processing
