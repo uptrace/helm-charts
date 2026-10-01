@@ -1,19 +1,22 @@
 {{- /*
-The second half of an upgrade, after the rollout: the backfill and finalize
-steps of the migrations. `up --wait` waits for the new pods when a hook starts
-before the rollout completes. On a fresh install it runs every step.
+The first half of an upgrade: the expand steps of the migrations, which the
+old pods keep serving through. The Job runs the image of the new release, which
+holds the new migrations, and `up` stops before the restart that every process
+must make. The post-upgrade Job in uptrace-migrate-job.yaml runs the rest after
+the rollout. A fresh install has no old pods, so its post-install Job does
+everything.
 */ -}}
 {{- if not .Values.uptrace.migrate.disabled }}
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "uptrace.fullname" . }}-migrate
+  name: {{ include "uptrace.fullname" . }}-migrate-expand
   labels:
-    app: uptrace-migrate
+    app: uptrace-migrate-expand
     {{- include "uptrace.labels" . | nindent 4 }}
   annotations:
-    "helm.sh/hook": post-install,post-upgrade
-    "helm.sh/hook-weight": "5"
+    "helm.sh/hook": pre-upgrade
+    "helm.sh/hook-weight": "2"
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
 spec:
   template:
@@ -23,7 +26,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        app: uptrace-migrate
+        app: uptrace-migrate-expand
         {{- include "uptrace.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.uptrace.imagePullSecrets }}
@@ -47,8 +50,7 @@ spec:
               set -euxo pipefail
               /uptrace --config=/etc/uptrace/config.yml pg wait
               /uptrace --config=/etc/uptrace/config.yml ch wait
-              /uptrace --config=/etc/uptrace/config.yml migrate up --wait 10m
-              /uptrace --config=/etc/uptrace/config.yml db seed
+              /uptrace --config=/etc/uptrace/config.yml migrate up --before-release-change
           volumeMounts:
             - name: config
               mountPath: /etc/uptrace/config.yml
@@ -96,5 +98,5 @@ spec:
       volumes:
         - name: config
           configMap:
-            name: {{ include "uptrace.fullname" . }}
+            name: {{ include "uptrace.fullname" . }}-validate
 {{- end }}

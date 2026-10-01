@@ -1,4 +1,9 @@
-{{- if not .Values.uptrace.configValidate.disabled }}
+{{- /*
+The config of the new release, for the pre-upgrade hooks. The ConfigMap of the
+release itself still holds the old config while they run. The validate Job and
+the expand Job of the migrations mount it.
+*/ -}}
+{{- if or (not .Values.uptrace.configValidate.disabled) (not .Values.uptrace.migrate.disabled) }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
