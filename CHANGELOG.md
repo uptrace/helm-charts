@@ -1,5 +1,16 @@
 # Changelog
 
+## [v2.1.0-beta.7] - Unreleased
+
+### Bug Fixes
+
+- **Generated secret** - Generate `service.secret` on the first install and keep it on later
+  upgrades. The chart stores it in a Secret and gives it to Uptrace as `UPTRACE_SECRET`. Set
+  `uptrace.secret` to use your own value. Uptrace refuses the old `FIXME` placeholder, so a render
+  now fails when `service.secret` is `FIXME` or empty.
+- **Config validation on install** - Run the config validate Job before a fresh install too, not
+  only before an upgrade.
+
 ## [v2.1.0-beta.3] - 2026-03-11
 
 ### Features
