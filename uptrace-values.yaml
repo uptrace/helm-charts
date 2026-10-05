@@ -4,7 +4,7 @@ uptrace:
   config:
     service:
       env: hosted
-      secret: 'FIXME'
+      secret: ${UPTRACE_SECRET}
 
     site:
       url: http://uptrace.local
