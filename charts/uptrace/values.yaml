@@ -271,6 +271,13 @@ ingress:
 uptrace:
   replicaCount: 1
 
+  # The secret key of service.secret. The chart keeps it in a Secret and gives it
+  # to Uptrace as the UPTRACE_SECRET env var. Leave it empty to generate a random
+  # secret on the first install and keep it on later upgrades. Set it when a tool
+  # renders the chart with `helm template` (e.g. Argo CD), because such a render
+  # cannot read the existing Secret and generates a new value each time.
+  secret: ''
+
   migrate:
     disabled: false
 
@@ -347,7 +354,9 @@ uptrace:
     # Core service settings that define the runtime environment and security
     service:
       env: hosted # Environment: hosted, development, production
-      secret: FIXME # Secret key for cryptographic operations (CHANGE THIS!)
+      # Secret key for cryptographic operations. The chart sets UPTRACE_SECRET
+      # from uptrace.secret above. Uptrace refuses FIXME and an empty value.
+      secret: ${UPTRACE_SECRET}
 
     # -----------------------------------------------------------------------------
     # Site Configuration

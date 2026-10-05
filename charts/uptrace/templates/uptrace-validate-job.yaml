@@ -67,6 +67,7 @@ spec:
                   name: uptrace-postgresql-app
                   key: dbname
             {{- end }}
+            {{- include "uptrace.secretEnv" . | nindent 12 }}
             {{- toYaml .Values.uptrace.env | nindent 12 }}
           envFrom:
             {{- toYaml .Values.uptrace.envFrom | nindent 12 }}
