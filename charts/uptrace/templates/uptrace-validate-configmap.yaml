@@ -1,7 +1,7 @@
 {{- /*
-The config of the new release, for the pre-upgrade hooks. The ConfigMap of the
-release itself still holds the old config while they run. The validate Job and
-the expand Job of the migrations mount it.
+The config of the new release, for the pre-install and pre-upgrade hooks. The
+ConfigMap of the release itself does not exist yet or still holds the old config
+while they run. The validate Job and the expand Job of the migrations mount it.
 */ -}}
 {{- if or (not .Values.uptrace.configValidate.disabled) (not .Values.uptrace.migrate.disabled) }}
 apiVersion: v1
@@ -11,7 +11,7 @@ metadata:
   labels:
     {{- include "uptrace.labels" . | nindent 4 }}
   annotations:
-    "helm.sh/hook": pre-upgrade
+    "helm.sh/hook": pre-install,pre-upgrade
     "helm.sh/hook-weight": "0"
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
 data:
