@@ -88,10 +88,9 @@ uptrace:
         # Password for authentication.
         password: mailhog
         # Uncomment to disable opportunistic TLS.
-        #tls: { disabled: true }
+        #tls: { insecure: true }
         # Emails will be send from this address.
         from: 'uptrace@uptrace.local'
 
     license:
-      data: ''
-      # path: /path/to/uptrace/license
+      key: ''
