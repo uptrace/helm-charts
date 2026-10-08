@@ -12,10 +12,10 @@ uptrace:
     ch_cluster:
       shards:
         - replicas:
-            - addr: ${CH_DATABASE:clickhouse-uptrace1:9000}
+            - addr: ${CH_ADDR:clickhouse-uptrace1:9000}
               database: ${CH_DATABASE:uptrace}
               user: ${CH_USER:uptrace}
-              password: ${CH_USER:uptrace}
+              password: ${CH_PASSWORD:uptrace}
 
     pg:
       addr: ${PG_ADDR:uptrace-postgresql-rw:5432}

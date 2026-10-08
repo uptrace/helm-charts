@@ -1,9 +1,21 @@
 # Changelog
 
-## [v2.1.0-beta.7] - Unreleased
+## [v2.1.0-rc.1] - Unreleased
+
+### Features
+
+- **Uptrace v2.1.0-rc.1** - Deploy Uptrace v2.1.0-rc.1 by default.
 
 ### Bug Fixes
 
+- **Alerting options** - Document `alerting.monitors` and `alerting.notifications` in place of the
+  deprecated `alerting.disabled`.
+- **ClickHouse storage policies** - Set the storage policy of the `service_graph_edges` and
+  `project_metrics` tables, like the other tables.
+- **Self-monitoring DSN** - Build the host of `self_monitoring.dsn` from the Uptrace Service name
+  and ports of the release. Self-monitoring now works with any release name, not only `uptrace`.
+- **Example values** - Read the ClickHouse address from `CH_ADDR` and the password from
+  `CH_PASSWORD` in `uptrace-values.yaml`.
 - **Generated secret** - Generate `service.secret` on the first install and keep it on later
   upgrades. The chart stores it in a Secret and gives it to Uptrace as `UPTRACE_SECRET`. Set
   `uptrace.secret` to use your own value. Uptrace refuses the old `FIXME` placeholder, so a render

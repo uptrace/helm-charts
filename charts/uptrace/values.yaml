@@ -353,7 +353,7 @@ uptrace:
     # -----------------------------------------------------------------------------
     # Core service settings that define the runtime environment and security
     service:
-      env: hosted # Environment: hosted, development, production
+      env: hosted # Environment: hosted (use dev only for local development)
       # Secret key for cryptographic operations. The chart sets UPTRACE_SECRET
       # from uptrace.secret above. Uptrace refuses FIXME and an empty value.
       secret: ${UPTRACE_SECRET}
@@ -572,6 +572,8 @@ uptrace:
       events_data: { storage_policy: default } # Raw event data
       timeseries: { storage_policy: default } # Metric time series
       datapoints: { storage_policy: default } # Metric data points
+      service_graph_edges: { storage_policy: default } # Service graph edges
+      project_metrics: { storage_policy: default } # Per-project usage metrics
 
     # -----------------------------------------------------------------------------
     # Redis Cache Configuration
@@ -707,9 +709,13 @@ uptrace:
     # Monitoring and alerting system
     # Provides proactive monitoring with notifications
     alerting:
-      # Uncomment to disable the entire alerting system
-      # This saves resources if you don't use monitoring alerts
-      #disabled: true
+      # Uncomment to stop the monitor runners (metric, error and SLO monitors)
+      # Monitors, alerts and incidents stay as they are
+      #monitors: false
+
+      # Uncomment to stop delivering alert notifications
+      # Alerts still fire and resolve, and the UI still shows them
+      #notifications: false
 
     # JavaScript error sourcemap processing
     # Provides better error stack traces for frontend applications
@@ -732,9 +738,13 @@ uptrace:
       #disabled: true
 
       # DSN for internal telemetry
-      # Format: http://project_token@host?grpc=port
+      # Format: http://project_token@host:port?grpc=port
       # This can point to a project in this Uptrace instance or to the Uptrace Cloud
-      dsn: http://project1_secret@uptrace:80?grpc=4317
+      # The chart fills in the Uptrace Service name and ports of this release
+      # The token is project_token1 from seed_data above
+      dsn:
+        'http://project1_secret@{{ include "uptrace.fullname" $ }}:{{ .Values.uptrace.service.http_port
+        }}?grpc={{ .Values.uptrace.service.grpc_port }}'
 
     # Telegram bot for notifications
     # Enables sending alert notifications to Telegram channels/users
