@@ -1,5 +1,23 @@
 # Changelog
 
+## [v2.1.0] - 2026-11-14
+
+### Features
+
+- **Uptrace v2.1.0** - Deploy Uptrace v2.1.0, the first stable v2.1 release, by default. See the
+  [Uptrace changelog](https://github.com/uptrace/uptrace/blob/master/CHANGELOG.md) for the changes
+  since v2.1.0-rc.1.
+
+### Upgrading
+
+- `helm upgrade --wait` runs the expand steps in the pre-upgrade Job and the rest of `migrate up`
+  in the post-upgrade Job, as in v2.1.0-rc.1. From v2.0.x or a v2.1 beta, read
+  [Upgrading to v2.1.0](https://uptrace.dev/get/hosted/upgrade#upgrading-to-v210) first.
+- During the upgrade, the incident screens wait until the post-upgrade Job finishes its backfill.
+- The chart's default config passes `uptrace config validate` and `uptrace config fix` of v2.1.0
+  with no deprecated options. If your values set `ingest.produce_wait_timeout`, rename it to
+  `ingest.request_timeout`.
+
 ## [v2.1.0-rc.1] - 2026-10-08
 
 ### Features
